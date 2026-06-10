@@ -4,7 +4,7 @@ public class CommandBranch
 {
     public string name;
     public Func<CommandArg, bool> execute;
-    public Func<List<string>> suggestion;
+    public Func<CommandBranch,List<string>> suggestion;
     public List<CommandBranch> branches = new List<CommandBranch>();
     public List<Argument> arguments = new List<Argument>();
 
@@ -45,7 +45,7 @@ public class CommandBranch
         return this;
     }
 
-    public CommandBranch SetSuggestion(Func<List<string>> suggestion)
+    public CommandBranch SetSuggestion(Func<CommandBranch,List<string>> suggestion)
     {
         this.suggestion = suggestion;
         return this;
@@ -119,16 +119,27 @@ public class CommandBranch
     public List<string> GetSuggestions(List<string> args)
     {
         var last = args.Last();
+        args.RemoveAt(args.Count - 1);
 
         var b = Parse(args, out int i);
 
-        if (b.arguments[i].suggestion != null)
-        {
-            var l = b.arguments[i].suggestion.Invoke();
-            return l.Where(v => v.StartsWith(last)).ToList();
-        }
+        List<string> list = new();
+        if(i == 0 && b.suggestion != null)
+            list.AddRange(b.suggestion.Invoke(this));
+        if(b.arguments.Count > i)
+            list.AddRange(b.arguments[i].suggestion.Invoke());
+        //
+        // if (i == 0)//branches suggestions
+        // {
+        //     if(b.suggestion != null)
+        //         list = b.suggestion.Invoke(this);
+        // }
+        // else if (b.arguments[i].suggestion != null)
+        // {
+        //     list = b.arguments[i].suggestion.Invoke();
+        // }
 
-        return null;
+        return list.Where(v => v.StartsWith(last)).ToList();
     }
 
     public class Argument

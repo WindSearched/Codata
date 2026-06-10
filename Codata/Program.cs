@@ -86,11 +86,10 @@ class Program
         Application.EnableVisualStyles();
         Application.SetCompatibleTextRenderingDefault(false);
         form = new MainForm();
-        form.OnKeyDown += downed =>
+        form.textBox.TextChanged += (_,_) =>
         {
-            var s = form.textBox.Text + downed;
+            var s = form.textBox.Text;
             var l = s.Split(' ');
-            form.ListBox.Items.Clear();
             form.ListBox.DataSource = command.GetSuggestions(l.ToList());;
         };
 
@@ -100,6 +99,7 @@ class Program
     static void RegisterCommands()
     {
         command = new CommandBranch("codata")
+                .SetSuggestion(b =>  b.branches.Select(v => v.name).ToList())
                 .AddBranch(new CommandBranch("author")
                     .Execute(_ =>
                     {
