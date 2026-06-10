@@ -19,6 +19,22 @@ class MainForm : Form
 		TextBox textBox = this.textBox = new TextBox();
 		textBox.Location = new System.Drawing.Point(50, 50);
 		textBox.Width = 200;
+		textBox.PreviewKeyDown += (s, e) =>
+		{
+			if (e.KeyCode == Keys.Tab)
+			{
+				e.IsInputKey = true; //告诉系统这是输入键
+			}
+		};
+		textBox.KeyDown += (s, e) =>
+		{
+			if (e.KeyCode == Keys.Tab)
+			{
+				e.SuppressKeyPress = true; // 阻止跳转
+				Console.WriteLine("tab");
+				OnTabDown?.Invoke();
+			}
+		};
 
 		Button button = new Button();
 		button.Text = "enter";
@@ -53,11 +69,6 @@ class MainForm : Form
 		{
 			Console.WriteLine("enter");
 			OnEnterKeyDown?.Invoke();
-		}
-		else if (e.KeyCode == (Keys)18)//temporanealty
-		{
-			Console.WriteLine("insert");
-			OnTabDown?.Invoke();
 		}
 	}
 }
@@ -143,7 +154,7 @@ class Program
 			int index = c.LastIndexOf(' ');
 
 			c = index != -1 ? c.Substring(0, index+1) : "";
-			c += ' ' + s;
+			c += s + ' ';
 			form.textBox.Text = c;
 			form.textBox.SelectionStart = form.textBox.Text.Length;
 			form.textBox.SelectionLength = 0;
