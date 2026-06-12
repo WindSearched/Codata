@@ -7,6 +7,8 @@ class MainForm : Form
 	public event Action OnEnterKeyDown;
 	public event Action<string> OnKeyDown;
 	public event Action OnTabDown;
+	public event Action OnDownDown;
+	public event Action OnUpDown;
 
 	public ListBox  ListBox;
 	public TextBox textBox;
@@ -66,10 +68,17 @@ class MainForm : Form
 	{
 		OnKeyDown?.Invoke(e.KeyCode.ToString());
 
-		if (e.KeyCode == Keys.Enter)
+		switch (e.KeyCode)
 		{
-			Console.WriteLine("enter");
-			OnEnterKeyDown?.Invoke();
+			case Keys.Enter:
+				OnEnterKeyDown?.Invoke();
+				break;
+			case Keys.Down:
+				OnDownDown?.Invoke();
+				break;
+			case Keys.Up:
+				OnUpDown?.Invoke();
+				break;
 		}
 	}
 }
@@ -180,6 +189,22 @@ class Program
 			form.textBox.Text = c;
 			form.textBox.SelectionStart = form.textBox.Text.Length;
 			form.textBox.SelectionLength = 0;
+		};
+		form.OnDownDown += () =>
+		{
+			int i = form.ListBox.SelectedIndex;
+			int max = form.ListBox.Items.Count -1;
+			i = i == max ? 0 : i + 1;
+
+			form.ListBox.SelectedIndex = i;
+		};
+		form.OnUpDown += () =>
+		{
+			int i = form.ListBox.SelectedIndex;
+			int max = form.ListBox.Items.Count -1;
+			i = i == 0 ? max : i - 1;
+
+			form.ListBox.SelectedIndex = i;
 		};
 	}
 
