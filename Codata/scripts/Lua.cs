@@ -42,6 +42,7 @@ public static class Lua
         r("log", (Action<object>)Program.Log);
 
         RegisterStaticClass(typeof(Data), "data");
+        RegisterStaticClass(typeof(Commands), "cmd");
     }
 
     public static void RegisterStaticClass(Type type, string luaName)

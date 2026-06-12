@@ -93,6 +93,10 @@ class Program
 		RegisterCommands();
 		Data.Init();
 		Lua.Init();
+		Commands.Init();
+
+		//test
+		Commands.SetPointerCommand("optest", "open \"C:\\Users\\Public\\Desktop\\Unity Hub.lnk\"");
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);

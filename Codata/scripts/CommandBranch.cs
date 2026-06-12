@@ -51,6 +51,18 @@ public class CommandBranch
         return this;
     }
 
+    public CommandBranch Parse(string path, out CommandArg args)
+    {
+        path = path.Trim(' ');
+        var splited = Commands.ParseArgs(path);
+        return Parse(splited, out args);
+    }
+    public CommandBranch Parse(string path, out int remainsCount)
+    {
+        path = path.Trim(' ');
+        var splited = Commands.ParseArgs(path);
+        return Parse(splited, out remainsCount);
+    }
     public CommandBranch Parse(List<string> splited, out CommandArg args)
     {
         if (splited.Count == 0)
@@ -102,8 +114,7 @@ public class CommandBranch
 
     public bool Command(string arg)
     {
-        var list = arg.Split(' ').ToList();
-        var branch = Parse(list, out CommandArg args);
+        var branch = Parse(arg, out CommandArg args);
         return branch.execute != null && branch.execute.Invoke(args);
     }
 
