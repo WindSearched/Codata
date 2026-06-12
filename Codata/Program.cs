@@ -41,9 +41,10 @@ class MainForm : Form
 		button.Location = new System.Drawing.Point(50, 100);
 		void click()
 		{
-			Program.command.Command(textBox.Text);
+			Program.command.Command(textBox.Text.Trim(' '));
 			MessageBox.Show("输出：" + Program.output);
 			Program.output = "";
+			textBox.Text = "";
 		}
 		button.Click += (s, e) => click();
 		OnEnterKeyDown += click;

@@ -126,7 +126,7 @@ public class CommandBranch
         List<string> list = new();
         if(i == 0 && b.suggestion != null)
             list.AddRange(b.suggestion.Invoke(this));
-        if(b.arguments.Count > i)
+        if(b.arguments.Count > i && b.arguments[i].suggestion != null)
             list.AddRange(b.arguments[i].suggestion.Invoke());
         //
         // if (i == 0)//branches suggestions
