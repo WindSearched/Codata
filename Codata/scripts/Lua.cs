@@ -43,9 +43,52 @@ public static class Lua
 
         RegisterStaticClass(typeof(Data), "data");
         RegisterStaticClass(typeof(Commands), "cmd");
+
+        RegisterClass(typeof(Commands), "CommandBranch");
     }
 
     public static void RegisterStaticClass(Type type, string luaName)
+    {
+        var table = new Table(script);
+
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Static);
+
+        foreach (var method in methods)
+        {
+            table[method.Name] = WrapMethodStatic(script, method);
+        }
+
+        script.Globals[luaName] = table;
+    }
+    private static DynValue WrapMethodStatic(Script script, MethodInfo method)
+    {
+        return DynValue.NewCallback((ctx, args) =>
+        {
+            try
+            {
+                var parameters = method.GetParameters();
+
+                object[] invokeArgs = new object[parameters.Length];
+
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    if (i < args.Count)
+                        invokeArgs[i] = args[i].ToObject(parameters[i].ParameterType);
+                    else
+                        invokeArgs[i] = parameters[i].HasDefaultValue ? parameters[i].DefaultValue : null;
+                }
+
+                var result = method.Invoke(null, invokeArgs);
+
+                return DynValue.FromObject(script, result);
+            }
+            catch (Exception ex)
+            {
+                throw new ScriptRuntimeException(ex.Message);
+            }
+        });
+    }
+    public static void RegisterClass(Type type, string luaName)
     {
         var table = new Table(script);
 
@@ -65,7 +108,6 @@ public static class Lua
             try
             {
                 var parameters = method.GetParameters();
-
                 object[] invokeArgs = new object[parameters.Length];
 
                 for (int i = 0; i < parameters.Length; i++)
