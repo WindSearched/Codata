@@ -91,6 +91,8 @@ class Program
 	static void Main()
 	{
 		RegisterCommands();
+		Data.Init();
+		Lua.Init();
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
@@ -139,6 +141,21 @@ class Program
 						output = arg.Get("name");
 						return true;
 					}))
+				.AddBranch(new CommandBranch("open")
+					.AddArgument(new CommandBranch.Argument("path"))
+					.Execute(arg =>
+					{
+						string path = arg.Get("path");
+						if (Data.FileExists(path))
+						{
+							Data.OpenForm(path);
+							return true;
+						}
+						else
+							return false;
+					})
+				)
+
 			;
 	}
 
@@ -160,5 +177,10 @@ class Program
 			form.textBox.SelectionStart = form.textBox.Text.Length;
 			form.textBox.SelectionLength = 0;
 		};
+	}
+
+	public static void Log(object message)
+	{
+		Console.WriteLine(message);
 	}
 }
