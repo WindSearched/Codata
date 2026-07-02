@@ -12,6 +12,8 @@ public static class Commands
         );
     }
 
+    public static void AddBranch(CommandBranch branch) => Program.command.AddBranch(branch);
+
     public static void Init()
     {
         branch = Program.command;

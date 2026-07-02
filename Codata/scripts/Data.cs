@@ -63,4 +63,28 @@ public static class Data
     {
         Process.Start("explorer.exe", path);
     }
+
+    public static void OpenForm(ProcessStartInfo startInfo)
+    {
+        Process.Start(startInfo);
+    }
+
+    public static void OpenForm(string fileName, string arguments, bool useShell)
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = fileName,
+            Arguments = arguments,
+            UseShellExecute = useShell
+        });
+    }
+
+    /*
+     * Process.Start(new ProcessStartInfo
+{
+    FileName = @"C:\Program Files\Unity Hub\Unity Hub.exe",
+    Arguments = $"-- --open \"{projectPath}\"",
+    UseShellExecute = true
+});
+     */
 }

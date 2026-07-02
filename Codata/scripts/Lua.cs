@@ -42,9 +42,15 @@ public static class Lua
         r("log", (Action<object>)Program.Log);
 
         RegisterStaticClass(typeof(Data), "data");
+        RegisterStaticClass(typeof(New), "new");
         RegisterStaticClass(typeof(Commands), "cmd");
 
         RegisterClass(typeof(Commands), "CommandBranch");
+
+        UserData.RegisterType<CommandBranch>();
+        UserData.RegisterType<CommandBranch.CommandArg>();
+        UserData.RegisterType<CommandBranch.Argument>();
+
     }
 
     public static void RegisterStaticClass(Type type, string luaName)
@@ -84,7 +90,7 @@ public static class Lua
             }
             catch (Exception ex)
             {
-                throw new ScriptRuntimeException(ex.Message);
+                throw new ScriptRuntimeException(ex.ToString(), ex);
             }
         });
     }
@@ -124,8 +130,13 @@ public static class Lua
             }
             catch (Exception ex)
             {
-                throw new ScriptRuntimeException(ex.Message);
+                throw new ScriptRuntimeException(ex.ToString(), ex);
             }
         });
     }
+}
+
+public static class New
+{
+    public static CommandBranch CommandBranch(string name) => new CommandBranch(name);
 }
