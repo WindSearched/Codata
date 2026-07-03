@@ -15,12 +15,12 @@ class MainForm : Form
 	public MainForm()
 	{
 		this.Text = "Codata";
-		this.Width = 800;
-		this.Height = 600;
+
+		this.ClientSize = new Size(800, 400);
 
 		TextBox textBox = this.textBox = new TextBox();
-		textBox.Location = new System.Drawing.Point(50, 50);
-		textBox.Width = 200;
+		textBox.Location = new System.Drawing.Point(40, 347);
+		textBox.Width = 645;
 		textBox.PreviewKeyDown += (s, e) =>
 		{
 			if (e.KeyCode == Keys.Tab)
@@ -40,7 +40,7 @@ class MainForm : Form
 
 		Button button = new Button();
 		button.Text = "enter";
-		button.Location = new System.Drawing.Point(50, 100);
+		button.Location = new System.Drawing.Point(685, 347);
 		void click()
 		{
 			Program.command.Command(textBox.Text.Trim(' '));
@@ -48,6 +48,7 @@ class MainForm : Form
 			Program.output = "";
 			textBox.Text = "";
 		}
+		Program.Log(button.Width);
 		button.Click += (s, e) => click();
 		OnEnterKeyDown += click;
 		KeyDown += Keydown;
@@ -58,9 +59,9 @@ class MainForm : Form
 
 		//list
 		ListBox listBox = ListBox = new ListBox();
-		listBox.Location = new System.Drawing.Point(400, 50);
-		listBox.Width = 200;
-		listBox.Height = 150;  // 超过高度就会自动出现滚动条
+		listBox.Location = new System.Drawing.Point(590, 40);
+		listBox.Width = 170;
+		listBox.Height = 267;  // 超过高度就会自动出现滚动条
 
 		this.Controls.Add(listBox);
 	}
