@@ -101,8 +101,8 @@ class Program
 	{
 		RegisterCommands();
 		Data.Init();
-		Lua.Init();
 		Commands.Init();
+		Lua.Init();
 
 		//test
 		Commands.SetPointerCommand("optest", "open \"C:\\Users\\Public\\Desktop\\Unity Hub.lnk\"");

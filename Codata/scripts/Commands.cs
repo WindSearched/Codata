@@ -2,17 +2,17 @@
 
 public static class Commands
 {
-    public static CommandBranch branch;
+    private static CommandBranch branch;
 
     public static void SetPointerCommand(string pointer, string pointedCommand, string branchPath = "")
     {
-        var s = branch.Parse(branchPath, out int _);
+        var s = branch.Parse(branchPath, out  _);
         s.AddBranch(new CommandBranch(pointer)
             .Execute(arg => branch.Command(pointedCommand))
         );
     }
-
     public static void AddBranch(CommandBranch branch) => Program.command.AddBranch(branch);
+
 
     public static void Init()
     {

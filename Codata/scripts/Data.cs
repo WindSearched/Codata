@@ -88,3 +88,33 @@ public static class Data
 });
      */
 }
+public class DataLua
+{
+    public bool FileExists(string path) => Data.FileExists(path);
+
+    public bool DirectoryExists(string path) => Data.DirectoryExists(path);
+
+    public void CreateFile(string path, string content = "", bool rewrite = true)
+        => Data.CreateFile(path, content, rewrite);
+
+    public void CreateDirectory(string path, bool rewrite = true)
+        => Data.CreateDirectory(path, rewrite);
+
+    public string ReadFile(string path)
+        => Data.ReadFile(path);
+
+    public string PathCombine(string a, string b)
+        => Data.PathCombine(a, b);
+
+    public FileInfo[] GetFilesInfo(string path)
+        => Data.GetFilesInfo(path);
+
+    public void OpenForm(string path)
+        => Data.OpenForm(path);
+
+    public void OpenForm(string fileName, string args, bool useShell)
+        => Data.OpenForm(fileName, args, useShell);
+
+    public void Init()
+        => Data.Init();
+}

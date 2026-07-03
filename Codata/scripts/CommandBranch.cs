@@ -1,191 +1,253 @@
-﻿namespace Codata.scripts;
+﻿using MoonSharp.Interpreter;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
-public class CommandBranch
+namespace Codata.scripts
 {
-    public string name;
-    public Func<CommandArg, bool> execute;
-    public Func<CommandBranch,List<string>> suggestion;
-    public List<CommandBranch> branches = new List<CommandBranch>();
-    public List<Argument> arguments = new List<Argument>();
+    public class CommandBranch
+    {
+        public string name;
 
-    public CommandBranch AddBranch(CommandBranch branch)
-    {
-        branches.Add(branch);
-        return this;
-    }
+        // =========================
+        // C# / Lua 双执行体系
+        // =========================
+        private Func<CommandArg, bool> _csExecute;
+        private Closure _luaExecute;
+        private Script _script;
 
-    public CommandBranch AddBranches(params CommandBranch[] branches)
-    {
-        foreach (var branch in branches)
-            AddBranch(branch);
-        return this;
-    }
+        private Func<CommandBranch, List<string>> _csSuggestion;
+        private Closure _luaSuggestion;
 
-    public CommandBranch AddArgument(Argument argument)
-    {
-        arguments.Add(argument);
-        return this;
-    }
+        public List<CommandBranch> branches = new();
+        public List<Argument> arguments = new();
 
-    public CommandBranch AddArguments(params Argument[] arguments)
-    {
-        foreach (var argument in arguments)
-            AddArgument(argument);
-        return this;
-    }
-
-    /// <summary>
-    /// Add the execute method of this command branch
-    /// </summary>
-    /// <param name="execute"></param>
-    /// <returns></returns>
-    public CommandBranch Execute(Func<CommandArg, bool> execute)
-    {
-        this.execute = execute;
-        return this;
-    }
-
-    public CommandBranch SetSuggestion(Func<CommandBranch,List<string>> suggestion)
-    {
-        this.suggestion = suggestion;
-        return this;
-    }
-
-    public CommandBranch Parse(string path, out CommandArg args)
-    {
-        path = path.Trim(' ');
-        var splited = Commands.ParseArgs(path);
-        return Parse(splited, out args);
-    }
-    public CommandBranch Parse(string path, out int remainsCount)
-    {
-        path = path.Trim(' ');
-        var splited = Commands.ParseArgs(path);
-        return Parse(splited, out remainsCount);
-    }
-    public CommandBranch Parse(List<string> splited, out CommandArg args)
-    {
-        if (splited.Count == 0)
+        // =========================
+        // 构造
+        // =========================
+        public CommandBranch(string name)
         {
-            args = null;
+            this.name = name;
+        }
+
+        // =========================
+        // 添加子节点
+        // =========================
+        public CommandBranch AddBranch(CommandBranch branch)
+        {
+            branches.Add(branch);
             return this;
         }
 
-        var s = splited[0];//get the first value
-        foreach (var branch in branches.Where(branch => branch.name == s))
-        {   // parse if is existed branch named s
-            splited.RemoveAt(0);
-            return branch.Parse(splited, out args);
-        }
-
-        if (splited.Count != arguments.Count)
+        public CommandBranch AddBranches(params CommandBranch[] branches)
         {
-            args = null;
+            foreach (var b in branches)
+                AddBranch(b);
             return this;
         }
 
-        args = new CommandArg();
-        for (int i = 0; i < arguments.Count; i++)
+        // =========================
+        // 参数
+        // =========================
+        public CommandBranch AddArgument(Argument argument)
         {
-            var arg = arguments[i];
-            args.SetArg(arg.argument, splited[i]);
-        }
-        return this;
-    }
-
-    public CommandBranch Parse(List<string> splited, out int remainsCount)
-    {
-        if (splited.Count == 0)
-        {
-            remainsCount = 0;
+            arguments.Add(argument);
             return this;
         }
 
-        var s = splited[0];//get the first value
-        foreach (var branch in branches.Where(branch => branch.name == s))
-        {   // parse if is existed branch named s
-            splited.RemoveAt(0);
-            return branch.Parse(splited, out remainsCount);
-        }
+        public CommandBranch AddArgument(string argument) => AddArgument(new Argument(argument));
 
-        remainsCount = splited.Count;
-        return this;
-    }
-
-    public bool Command(string arg)
-    {
-        var branch = Parse(arg, out CommandArg args);
-        return branch.execute != null && branch.execute.Invoke(args);
-    }
-
-    public delegate List<string> CMDSuggestion();
-
-    public CommandBranch(string name)
-    {
-        this.name = name;
-    }
-
-    public override string ToString() => name;
-
-    public List<string> GetSuggestions(List<string> args)
-    {
-        var last = args.Last();
-        args.RemoveAt(args.Count - 1);
-
-        var b = Parse(args, out int i);
-
-        List<string> list = new();
-        if(i == 0 && b.suggestion != null)
-            list.AddRange(b.suggestion.Invoke(this));
-        if(b.arguments.Count > i && b.arguments[i].suggestion != null)
-            list.AddRange(b.arguments[i].suggestion.Invoke());
-        //
-        // if (i == 0)//branches suggestions
-        // {
-        //     if(b.suggestion != null)
-        //         list = b.suggestion.Invoke(this);
-        // }
-        // else if (b.arguments[i].suggestion != null)
-        // {
-        //     list = b.arguments[i].suggestion.Invoke();
-        // }
-
-        return list.Where(v => v.StartsWith(last)).ToList();
-    }
-
-    public class Argument
-    {
-        public string argument;
-        public Func<List<string>> suggestion;
-
-        public Argument(string argument)
+        public CommandBranch AddArguments(params Argument[] arguments)
         {
-            this.argument = argument;
-        }
-
-        public Argument SetSuggestion(Func<List<string>> suggestion)
-        {
-            this.suggestion = suggestion;
+            foreach (var a in arguments)
+                AddArgument(a);
             return this;
         }
-    }
-    public class CommandArg
-    {
-        public Dictionary<string, string> args = new();
 
-        public string Get(string key) => args.ContainsKey(key) ? args[key] : null;
-
-        public string Get(int index)
+        // =========================
+        // C# 执行
+        // =========================
+        public CommandBranch Execute(Func<CommandArg, bool> func)
         {
-            var a = args.Values.ToList();
-            return a.Count > index ? a[index] : null;
+            _csExecute = func;
+            return this;
         }
 
-        public void SetArg(string key, string value, bool overwrite = true)
+        // =========================
+        // Lua 执行
+        // =========================
+        public CommandBranch Execute(Closure func, Script script)
         {
-            if (args.TryAdd(key, value)) return;
-            if(overwrite)
-                args[key] = value;
+            _luaExecute = func;
+            _script = script;
+            return this;
         }
+
+        // =========================
+        // 统一执行入口（关键）
+        // =========================
+        public bool Run(CommandArg arg)
+        {
+            // Lua 优先
+            if (_luaExecute != null)
+            {
+                var result = _script.Call(
+                    _luaExecute,
+                    DynValue.FromObject(_script, arg)
+                );
+
+                return result.CastToBool();
+            }
+
+            // C# fallback
+            return _csExecute?.Invoke(arg) ?? false;
+        }
+
+        // =========================
+        // 命令入口
+        // =========================
+        public bool Command(string input)
+        {
+            var branch = Parse(input, out CommandArg args);
+            return branch.Run(args);
+        }
+
+        // =========================
+        // Parse
+        // =========================
+        public CommandBranch Parse(string path, out CommandArg args)
+        {
+            var split = Commands.ParseArgs(path.Trim());
+            return Parse(split, out args);
+        }
+
+        public CommandBranch Parse(List<string> split, out CommandArg args)
+        {
+            if (split.Count == 0)
+            {
+                args = null;
+                return this;
+            }
+
+            var head = split[0];
+
+            foreach (var b in branches.Where(x => x.name == head))
+            {
+                split.RemoveAt(0);
+                return b.Parse(split, out args);
+            }
+
+            if (split.Count != arguments.Count)
+            {
+                args = null;
+                return this;
+            }
+
+            args = new CommandArg();
+
+            for (int i = 0; i < arguments.Count; i++)
+            {
+                args.SetArg(arguments[i].argument, split[i]);
+            }
+
+            return this;
+        }
+
+        // =========================
+        // Suggestion
+        // =========================
+
+        public CommandBranch SetSuggestion(Func<CommandBranch, List<string>> func)
+        {
+            _csSuggestion = func;
+            return this;
+        }
+        public CommandBranch SetSuggestion(Closure func, Script script)
+        {
+            _luaSuggestion = func;
+            _script = script;
+            return this;
+        }
+        public List<string> GetSuggestions(List<string> args)
+        {
+            var last = args.Last();
+            args.RemoveAt(args.Count - 1);
+
+            var node = Parse(args, out var a);
+            int i = args.Count;
+
+            var list = new List<string>();
+
+            if (i == 0)
+            {
+                if (node._luaSuggestion != null)
+                {
+                    var result = node._script.Call(
+                        node._luaSuggestion,
+                        DynValue.FromObject(node._script, node)
+                    );
+
+                    foreach (var v in result.Table.Values)
+                        list.Add(v.String);
+                }
+                else if (node._csSuggestion != null)
+                {
+                    list.AddRange(node._csSuggestion(node));
+                }
+            }
+
+            if (node.arguments.Count > i &&
+                node.arguments[i].suggestion != null)
+                list.AddRange(node.arguments[i].suggestion());
+
+            return list
+                .Where(x => x.StartsWith(last))
+                .ToList();
+        }
+
+        // =========================
+        // Inner types
+        // =========================
+        public class Argument
+        {
+            public string argument;
+            public Func<List<string>> suggestion;
+
+            public Argument(string argument)
+            {
+                this.argument = argument;
+            }
+
+            public Argument SetSuggestion(Func<List<string>> func)
+            {
+                suggestion = func;
+                return this;
+            }
+        }
+
+        public class CommandArg
+        {
+            public Dictionary<string, string> args = new();
+
+            public string Get(string key)
+                => args.TryGetValue(key, out var v) ? v : null;
+
+            public string Get(int index)
+                => args.Values.ElementAtOrDefault(index);
+
+            public void SetArg(string key, string value, bool overwrite = true)
+            {
+                if (!args.ContainsKey(key))
+                {
+                    args[key] = value;
+                    return;
+                }
+
+                if (overwrite)
+                    args[key] = value;
+            }
+        }
+
+        public override string ToString() => name;
     }
 }
