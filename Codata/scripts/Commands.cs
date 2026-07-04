@@ -8,7 +8,7 @@ public static class Commands
     {
         var s = branch.Parse(branchPath, out  _);
         s.AddBranch(new CommandBranch(pointer)
-            .Execute(arg => branch.Command(pointedCommand))
+            .Execute(arg => new(branch.Command(pointedCommand)))
         );
     }
     public static void AddBranch(CommandBranch branch) => Program.command.AddBranch(branch);

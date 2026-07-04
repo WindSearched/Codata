@@ -62,8 +62,16 @@ class MainForm : Form
 		listBox.Location = new System.Drawing.Point(590, 40);
 		listBox.Width = 170;
 		listBox.Height = 267;  // 超过高度就会自动出现滚动条
-
 		this.Controls.Add(listBox);
+
+		RichTextBox rtb = new RichTextBox();
+		rtb.ReadOnly = true;
+		rtb.ScrollBars = RichTextBoxScrollBars.Vertical;
+		rtb.Location = new Point(40, 40);
+		rtb.Width = 510;
+		rtb.Height = 267;
+
+		Controls.Add(rtb);
 	}
 	private void Keydown(object sender, KeyEventArgs e)
 	{
@@ -131,7 +139,7 @@ class Program
 					.Execute(_ =>
 					{
 						addOutput = author;
-						return true;
+						return new(true);
 					}))
 				.AddBranch(new CommandBranch("add")
 					.AddArguments(new("a"),new("b"))
@@ -142,7 +150,7 @@ class Program
 							{
 								addOutput = (a + b).ToString();
 							}
-						return false;
+						return new(true);
 					}))
 				.AddBranch(new CommandBranch("print")
 					.AddArgument(new CommandBranch.Argument("name")
@@ -153,7 +161,7 @@ class Program
 					.Execute(arg =>
 					{
 						output = arg.Get("name");
-						return true;
+						return new(true);
 					}))
 				.AddBranch(new CommandBranch("open")
 					.AddArgument(new CommandBranch.Argument("path"))
@@ -163,10 +171,10 @@ class Program
 						if (Data.FileExists(path))
 						{
 							Data.OpenForm(path);
-							return true;
+							return new(true);
 						}
 						else
-							return false;
+							return new(false);
 					})
 				)
 

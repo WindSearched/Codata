@@ -12,7 +12,7 @@ namespace Codata.scripts
         // =========================
         // C# / Lua 双执行体系
         // =========================
-        private Func<CommandArg, bool> _csExecute;
+        private Func<CommandArg, Result> _csExecute;
         private Closure _luaExecute;
         private Script _script;
 
@@ -67,7 +67,7 @@ namespace Codata.scripts
         // =========================
         // C# 执行
         // =========================
-        public CommandBranch Execute(Func<CommandArg, bool> func)
+        public CommandBranch Execute(Func<CommandArg, Result> func)
         {
             _csExecute = func;
             return this;
@@ -100,7 +100,7 @@ namespace Codata.scripts
             }
 
             // C# fallback
-            return _csExecute?.Invoke(arg) ?? false;
+            return _csExecute?.Invoke(arg).success ?? false;
         }
 
         // =========================
@@ -249,5 +249,29 @@ namespace Codata.scripts
         }
 
         public override string ToString() => name;
+    }
+
+    public struct Result
+    {
+        public string put;
+        public bool success;
+
+        public Result(string put, bool success)
+        {
+            this.put = put;
+            this.success = success;
+        }
+
+        public Result()
+        {
+            put = "default";
+            success = false;
+        }
+
+        public Result(bool success)
+        {
+            this.success = success;
+            put = success ? "success" : "fail";
+        }
     }
 }
