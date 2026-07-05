@@ -27,7 +27,7 @@ class MainForm : Form
 		textBox.Width = 645;
 		textBox.PreviewKeyDown += (s, e) =>
 		{
-			if (e.KeyCode == Keys.Tab)
+			if (e.KeyCode == Keys.Tab ||  e.KeyCode == Keys.Shift)
 			{
 				e.IsInputKey = true; //告诉系统这是输入键
 			}
@@ -62,8 +62,8 @@ class MainForm : Form
 		Program.Log(button.Width);
 		button.Click += (s, e) => click();
 		OnEnterKeyDown += click;
-		KeyDown += Keydown;
-		KeyUp += Keyup;
+		textBox.KeyDown += Keydown;
+		textBox.KeyUp += Keyup;
 
 		Controls.Add(textBox);
 		Controls.Add(button);
@@ -222,9 +222,12 @@ class Program
 
 			if (form.shift)
 			{
+				if (commandTube.pointer == -1)
+				{
+					commandTube.specialGetter = form.textBox.Text;
+				}
 				if (commandTube.TryPointBefore(out var result))
 				{
-					commandTube.specialGetter = new(form.textBox.Text);
 					form.textBox.Text = result;
 				}
 			}
@@ -245,9 +248,13 @@ class Program
 
 			if (form.shift)
 			{
-				if (commandTube.TryPointAfter(out var result))
+				if (commandTube.pointer == -1)
 				{
 					commandTube.specialGetter = form.textBox.Text;
+
+				}
+				if (commandTube.TryPointAfter(out var result))
+				{
 					form.textBox.Text = result;
 				}
 			}

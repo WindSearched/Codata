@@ -13,7 +13,7 @@ public class Tube<T>
 
     public void Add(T item)
     {
-        list.Add(item);
+        list.Insert(0, item);
         if (list.Count > length)
         {
             list.RemoveAt(list.Count - 1);
@@ -92,7 +92,8 @@ public class SpecialPointTube<T> : PointTube<T>
         }
         else if (pointer -1 > -1)
         {
-            result = Get(pointer);
+            result = Get(--pointer);
+            return true;
         }
         result = default;
         return false;
