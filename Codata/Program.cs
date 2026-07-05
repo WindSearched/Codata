@@ -9,6 +9,9 @@ class MainForm : Form
 	public event Action OnTabDown;
 	public event Action OnDownDown;
 	public event Action OnUpDown;
+	public event Action OnShiftDown;
+	public event Action OnShiftUp;
+	public bool shift;
 
 	public ListBox  ListBox;
 	public TextBox textBox;
@@ -53,11 +56,14 @@ class MainForm : Form
 			textBox.Text = "";
 
 			add(Program.PutUser());
+			Program.commandTube.Add(cmd);
+			Program.commandTube.RevertPointer();
 		}
 		Program.Log(button.Width);
 		button.Click += (s, e) => click();
 		OnEnterKeyDown += click;
 		KeyDown += Keydown;
+		KeyUp += Keyup;
 
 		Controls.Add(textBox);
 		Controls.Add(button);
@@ -94,6 +100,21 @@ class MainForm : Form
 			case Keys.Up:
 				OnUpDown?.Invoke();
 				break;
+			case Keys.ShiftKey:
+				OnShiftDown?.Invoke();
+				break;
+		}
+	}
+
+	private void Keyup(object sender, KeyEventArgs e)
+	{
+		OnKeyDown?.Invoke(e.KeyCode.ToString());
+
+		switch (e.KeyCode)
+		{
+			case Keys.ShiftKey:
+				OnShiftUp?.Invoke();
+				break;
 		}
 	}
 }
@@ -104,7 +125,7 @@ class Program
 	private static string author = "WindSearched";
 	public static CommandBranch command;
 	public static string user = "Codata";
-	public static Stack<string> commandStack = new Stack<string>();
+	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
 
 	[STAThread]
@@ -198,18 +219,50 @@ class Program
 		{
 			int i = form.ListBox.SelectedIndex;
 			int max = form.ListBox.Items.Count -1;
-			i = i == max ? 0 : i + 1;
 
-			form.ListBox.SelectedIndex = i;
+			if (form.shift)
+			{
+				if (commandTube.TryPointBefore(out var result))
+				{
+					commandTube.specialGetter = new(form.textBox.Text);
+					form.textBox.Text = result;
+				}
+			}
+			else
+			{
+				if (max >= 0)
+				{
+					i = i == max ? 0 : i + 1;
+					form.ListBox.SelectedIndex = i;
+				}
+			}
+
 		};
 		form.OnUpDown += () =>
 		{
 			int i = form.ListBox.SelectedIndex;
 			int max = form.ListBox.Items.Count -1;
-			i = i == 0 ? max : i - 1;
 
-			form.ListBox.SelectedIndex = i;
+			if (form.shift)
+			{
+				if (commandTube.TryPointAfter(out var result))
+				{
+					commandTube.specialGetter = form.textBox.Text;
+					form.textBox.Text = result;
+				}
+			}
+			else
+			{
+				if (max >= 0)
+				{
+					i = i == 0 ? max : i - 1;
+					form.ListBox.SelectedIndex = i;
+				}
+			}
+
 		};
+		form.OnShiftDown += () => form.shift = true;
+		form.OnShiftUp += () => form.shift = false;
 	}
 
 	public static void Log(object message)
