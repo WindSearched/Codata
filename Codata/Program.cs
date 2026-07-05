@@ -12,6 +12,7 @@ class MainForm : Form
 
 	public ListBox  ListBox;
 	public TextBox textBox;
+	public RichTextBox rtb;
 	public MainForm()
 	{
 		this.Text = "Codata";
@@ -43,10 +44,15 @@ class MainForm : Form
 		button.Location = new System.Drawing.Point(685, 347);
 		void click()
 		{
-			Program.command.Command(textBox.Text.Trim(' '));
-			MessageBox.Show("输出：" + Program.output);
-			Program.output = "";
+			string cmd = textBox.Text.Trim(' ');
+			void add(string s) => this.rtb.Text += s;
+
+			this.rtb.Text += cmd + "\n";
+			var result = Program.command.Command(cmd);
+			this.rtb.Text += result.put + "\n";
 			textBox.Text = "";
+
+			add(Program.PutUser());
 		}
 		Program.Log(button.Width);
 		button.Click += (s, e) => click();
@@ -64,14 +70,14 @@ class MainForm : Form
 		listBox.Height = 267;  // 超过高度就会自动出现滚动条
 		this.Controls.Add(listBox);
 
-		RichTextBox rtb = new RichTextBox();
+		RichTextBox rtb = this.rtb = new RichTextBox();
 		rtb.ReadOnly = true;
 		rtb.ScrollBars = RichTextBoxScrollBars.Vertical;
 		rtb.Location = new Point(40, 40);
 		rtb.Width = 510;
 		rtb.Height = 267;
-
 		Controls.Add(rtb);
+		rtb.Text += Program.PutUser();
 	}
 	private void Keydown(object sender, KeyEventArgs e)
 	{
@@ -97,13 +103,9 @@ class Program
 {
 	private static string author = "WindSearched";
 	public static CommandBranch command;
-	public static string output = "";
+	public static string user = "Codata";
+	public static Stack<string> commandStack = new Stack<string>();
 	public static MainForm form;
-
-	public static string addOutput
-	{
-		set => output = value;
-	}
 
 	[STAThread]
 	static void Main()
@@ -136,21 +138,18 @@ class Program
 		command = new CommandBranch("codata")
 				.SetSuggestion(b =>  b.branches.Select(v => v.name).ToList())
 				.AddBranch(new CommandBranch("author")
-					.Execute(_ =>
-					{
-						addOutput = author;
-						return new(true);
-					}))
+					.Execute(_ => new(author,true)))
 				.AddBranch(new CommandBranch("add")
 					.AddArguments(new("a"),new("b"))
 					.Execute(arg =>
 					{
-						if(float.TryParse(arg.Get("a"), out float a))
-							if (float.TryParse(arg.Get("b"), out float b))
-							{
-								addOutput = (a + b).ToString();
-							}
-						return new(true);
+						Result r =  new Result(true);
+						if (!float.TryParse(arg.Get("a"), out float a)) return r;
+						if (float.TryParse(arg.Get("b"), out float b))
+						{
+							r.put = (a + b).ToString();
+						}
+						return r;
 					}))
 				.AddBranch(new CommandBranch("print")
 					.AddArgument(new CommandBranch.Argument("name")
@@ -158,11 +157,7 @@ class Program
 						{
 							"wind","searched", "helloworld", "ciao", "hi", "114514"
 						}))
-					.Execute(arg =>
-					{
-						output = arg.Get("name");
-						return new(true);
-					}))
+					.Execute(arg => new(arg.Get("name"), true)))
 				.AddBranch(new CommandBranch("open")
 					.AddArgument(new CommandBranch.Argument("path"))
 					.Execute(arg =>
@@ -221,4 +216,6 @@ class Program
 	{
 		Console.WriteLine(message);
 	}
+
+	public static string PutUser() => user + ">";
 }

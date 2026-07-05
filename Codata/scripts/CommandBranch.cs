@@ -86,7 +86,7 @@ namespace Codata.scripts
         // =========================
         // 统一执行入口（关键）
         // =========================
-        public bool Run(CommandArg arg)
+        public Result Run(CommandArg arg)
         {
             // Lua 优先
             if (_luaExecute != null)
@@ -96,17 +96,17 @@ namespace Codata.scripts
                     DynValue.FromObject(_script, arg)
                 );
 
-                return result.CastToBool();
+                return result.ToObject<Result>();
             }
 
             // C# fallback
-            return _csExecute?.Invoke(arg).success ?? false;
+            return _csExecute?.Invoke(arg) ?? new(false);
         }
 
         // =========================
         // 命令入口
         // =========================
-        public bool Command(string input)
+        public Result Command(string input)
         {
             var branch = Parse(input, out CommandArg args);
             return branch.Run(args);
