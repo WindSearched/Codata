@@ -123,9 +123,10 @@ namespace Codata.scripts
 
         public CommandBranch Parse(List<string> split, out CommandArg args)
         {
+            args = new CommandArg();
+
             if (split.Count == 0)
             {
-                args = null;
                 return this;
             }
 
@@ -139,11 +140,9 @@ namespace Codata.scripts
 
             if (split.Count != arguments.Count)
             {
-                args = null;
                 return this;
             }
 
-            args = new CommandArg();
 
             for (int i = 0; i < arguments.Count; i++)
             {
@@ -230,7 +229,7 @@ namespace Codata.scripts
             public Dictionary<string, string> args = new();
 
             public string Get(string key)
-                => args.TryGetValue(key, out var v) ? v : null;
+                => args.TryGetValue(key, out var v) ? v : "";
 
             public string Get(int index)
                 => args.Values.ElementAtOrDefault(index);
