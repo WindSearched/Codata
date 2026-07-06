@@ -143,10 +143,12 @@ class Program
 		{
 			var s = form.textBox.Text;
 			var l = s.Split(' ');
-			form.ListBox.DataSource = command.GetSuggestions(l.ToList());;
+			form.ListBox.DataSource = command.GetSuggestions(l.ToList());
 		};
 
 		BindingKeys();
+
+		form.ListBox.DataSource = command.branches.Select(v => v.name).ToList();
 
 		Application.Run(form);
 	}
