@@ -5,6 +5,7 @@ namespace Codata.scripts;
 
 public static class Tools
 {
+    public static Info info;
     public static class ReflectionHelper
     {
         public static void SetFieldFromString(object obj, string fieldName, string value)
@@ -123,5 +124,14 @@ public static class Tools
 
             return fields.Select(field => field.Name).Select(value => value?.ToString() ?? "null").ToList();
         }
+    }
+
+    /// <summary>
+    /// log only the debug setting is active
+    /// </summary>
+    public static void DebugLog(object obj)
+    {
+        if(info.debug)
+            Program.Log("[Debug]" + obj);
     }
 }

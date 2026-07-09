@@ -230,6 +230,13 @@ namespace Codata.scripts
 
             public string Get(string key)
                 => args.TryGetValue(key, out var v) ? v : "";
+            public bool TryGet(string key, out string value) => args.TryGetValue(key, out value);
+
+            public int GetInt(string key)
+            {
+                string v = Get(key);
+                return int.Parse(v);
+            }
 
             public string Get(int index)
                 => args.Values.ElementAtOrDefault(index);

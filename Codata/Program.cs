@@ -137,7 +137,7 @@ class Program
 		Data.Init();
 		Commands.Init();
 		Lua.Init();
-		info = Info.ReadJson(Data.infoPath);
+		info = Tools.info = Info.ReadJson(Data.infoPath);
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
@@ -218,12 +218,17 @@ class Program
 					.AddArgument(new CommandBranch.Argument("value"))
 					.Execute(arg =>
 					{
-						string name = arg.Get("name");
-						string value = arg.Get("value");
-
+						if (!arg.TryGet("name", out var name))
+						{
+							return new("changes name is null", false);
+						}
+						if (!arg.TryGet("value", out var value))
+						{
+							return new("changes value is null", false);
+						}
 						Tools.ReflectionHelper.SetFieldFromString(info, name, value);
 
-						Program.Log(value);
+						Tools.DebugLog(value);
 
 						return new(true);
 					})
@@ -237,7 +242,6 @@ class Program
 	{
 		form.OnTabDown += () =>
 		{
-			Console.WriteLine("OnTabDown");
 			var box = form.ListBox;
 			if(box.SelectedItem == null) return;
 			var s = box.SelectedItem.ToString();
