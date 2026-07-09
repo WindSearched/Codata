@@ -2,10 +2,12 @@
 
 namespace Codata.scripts;
 using System.IO;
+using System.Text.Json;
 
 public static class Data
 {
     public static string filePath;
+    public static string infoPath;
     public static string defaultFilePath = AppDomain.CurrentDomain.BaseDirectory;
 
 
@@ -22,6 +24,8 @@ public static class Data
             filePath = defaultFilePath;
             CreateFile(defaultFilePath + "path.txt", defaultFilePath);
         }
+
+        infoPath = Path.Combine(filePath, "info.json");
     }
 
     public static bool FileExists(string path) => File.Exists(path);
@@ -79,14 +83,42 @@ public static class Data
         });
     }
 
-    /*
-     * Process.Start(new ProcessStartInfo
-{
-    FileName = @"C:\Program Files\Unity Hub\Unity Hub.exe",
-    Arguments = $"-- --open \"{projectPath}\"",
-    UseShellExecute = true
-});
-     */
+    public static bool WriteJson<T>(string path, T content, bool rewrite = true)
+    {
+        if (!FileExists(path) || rewrite)
+        {
+            string json =  JsonSerializer.Serialize(content, new JsonSerializerOptions
+            {
+                IncludeFields = true,
+                WriteIndented = true
+            });
+            CreateFile(path, json, rewrite);
+            return true;
+        }
+        return false;
+    }
+
+    public static T ReadJson<T>(string path)
+    {
+        if (FileExists(path))
+        {
+            string json = ReadFile(path);
+            return JsonSerializer.Deserialize<T>(json) ;
+        }
+        return default;
+    }
+
+    public static bool TryReadJson<T>(string path, out T content)
+    {
+        if (FileExists(path))
+        {
+            string json = ReadFile(path);
+            content = JsonSerializer.Deserialize<T>(json) ?? throw new InvalidOperationException();
+            return true;
+        }
+        content = default;
+        return false;
+    }
 }
 public class DataLua
 {

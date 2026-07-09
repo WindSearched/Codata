@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Forms;
 using Codata.scripts;
 
@@ -124,9 +125,10 @@ class Program
 {
 	private static string author = "WindSearched";
 	public static CommandBranch command;
-	public static string user = "Codata";
 	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
+	public static Info info;
+	public static event Action OnProgramClose;
 
 	[STAThread]
 	static void Main()
@@ -135,6 +137,7 @@ class Program
 		Data.Init();
 		Commands.Init();
 		Lua.Init();
+		info = Info.ReadJson(Data.infoPath);
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
@@ -151,6 +154,10 @@ class Program
 		form.ListBox.DataSource = command.branches.Select(v => v.name).ToList();
 
 		Application.Run(form);
+
+		//when program close
+		OnProgramClose?.Invoke();
+		Info.WriteJson(Data.infoPath, info);
 	}
 
 	static void RegisterCommands()
@@ -192,7 +199,33 @@ class Program
 							return new(false);
 					})
 				)
+				.AddBranch(new CommandBranch("user")
+					.AddArgument(new CommandBranch.Argument("name"))
+					.Execute(arg =>
+					{
+						string n = arg.Get("name");
+						if (n == "")
+							return new("changes name is null", false);
+						info.user = n;
+						return new("change succeed",true);
 
+					})
+				)
+				.AddBranch(new CommandBranch("setting")
+					.AddArgument(new CommandBranch.Argument("name"))
+					.AddArgument(new CommandBranch.Argument("value"))
+					.Execute(arg =>
+					{
+						string name = arg.Get("name");
+						string value = arg.Get("value");
+
+						Tools.ReflectionHelper.SetFieldFromString(info, name, value);
+
+						Program.Log(value);
+
+						return new(true);
+					})
+				)
 			;
 		command.AddBranch(command);
 
@@ -278,5 +311,5 @@ class Program
 		Console.WriteLine(message);
 	}
 
-	public static string PutUser() => user + ">";
+	public static string PutUser() => info.user + ">";
 }
