@@ -1,4 +1,4 @@
-﻿namespace Codata.scripts;
+﻿namespace Codata.scripts.classes;
 
 public class Tube<T>
 {

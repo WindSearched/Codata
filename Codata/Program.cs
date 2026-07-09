@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows.Forms;
 using Codata.scripts;
+using Codata.scripts.classes;
 
 class MainForm : Form
 {
