@@ -45,8 +45,8 @@ public static class Lua
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Data), "data");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(New), "new");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Commands), "cmd");
-        // script.Globals["cmd"] = UserData.CreateStatic<LuaCMD>();
-        // script.Globals["new"] = UserData.CreateStatic<New>();
+        LuaAutoWrapper.RegisterStaticClass(script, typeof(Tools.ReflectionHelper), "tools.refHelp");
+
 
         UserData.RegisterType<CommandBranch>();
         UserData.RegisterType<CommandBranch.CommandArg>();

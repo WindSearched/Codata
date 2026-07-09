@@ -212,7 +212,9 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("setting")
-					.AddArgument(new CommandBranch.Argument("name"))
+					.AddArgument(new CommandBranch.Argument("name")
+						.SetSuggestion(() => Tools.ReflectionHelper.GetFieldsString(info))
+					)
 					.AddArgument(new CommandBranch.Argument("value"))
 					.Execute(arg =>
 					{

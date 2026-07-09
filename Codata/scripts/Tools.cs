@@ -112,5 +112,16 @@ public static class Tools
                 new[] { ',', ';' },
                 StringSplitOptions.RemoveEmptyEntries);
         }
+
+        public static List<string> GetFieldsString(object obj, BindingFlags flags = BindingFlags.Instance | BindingFlags.Public)
+        {
+            if (obj == null)
+                return null;
+
+            FieldInfo[] fields = obj.GetType()
+                .GetFields(flags);
+
+            return fields.Select(field => field.Name).Select(value => value?.ToString() ?? "null").ToList();
+        }
     }
 }
