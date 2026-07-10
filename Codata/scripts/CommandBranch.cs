@@ -20,6 +20,13 @@ namespace Codata.scripts
         public List<CommandBranch> branches = new();
         public List<Argument> arguments = new();
 
+        /// <summary>
+        /// if it is true in parse time detect if the head splits is branches,
+        /// if is true set after args in argument
+        /// else parse in branch
+        /// </summary>
+        public bool param = false;
+
         // =========================
         // 构造
         // =========================
@@ -115,11 +122,25 @@ namespace Codata.scripts
             }
 
             var head = split[0];
+            var branchEqual = branches.Where(x => x.name == head).ToList();
 
-            foreach (var b in branches.Where(x => x.name == head))
+            if (param && branchEqual.Count == 0)
             {
-                split.RemoveAt(0);
-                return b.Parse(split, out args);
+                //all after slipts is arg
+                for (int i = 0; i < arguments.Count; i++)
+                {
+                    args.SetArg("param" + i, split[i]);
+                }
+                return this;
+            }
+            else
+            {
+                //when head is branch
+                foreach (var b in branches.Where(x => x.name == head))
+                {
+                    split.RemoveAt(0);
+                    return b.Parse(split, out args);
+                }
             }
 
             if (split.Count != arguments.Count)
@@ -170,12 +191,18 @@ namespace Codata.scripts
             {
                 var l = node.arguments[i].suggestion.Invoke();
                 if(l != null)
-                    list.AddRange();
+                    list.AddRange(l);
             }
 
             return list
                 .Where(x => x.StartsWith(last))
                 .ToList();
+        }
+
+        public CommandBranch ActiveParam()
+        {
+            param = true;
+            return this;
         }
 
         // =========================

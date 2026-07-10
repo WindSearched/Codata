@@ -104,7 +104,10 @@ public static class Data
         if (FileExists(path))
         {
             string json = ReadFile(path);
-            return JsonSerializer.Deserialize<T>(json) ;
+            return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
+            {
+                IncludeFields = true,
+            }) ;
         }
         return default;
     }
