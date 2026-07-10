@@ -260,5 +260,18 @@ namespace Codata.scripts
             this.success = success;
             put = success ? "success" : "fail";
         }
+
+        public static Result operator &(Result a, Result b)
+        {
+            Result r =  new Result
+            {
+                success = a.success & b.success
+            };
+            if (a.put == "default" || a.put == "")
+            {
+                r.put = b.put;
+            }
+            return r;
+        }
     }
 }

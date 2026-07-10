@@ -4,11 +4,23 @@ public static class Commands
 {
     private static CommandBranch branch;
 
-    public static void SetPointerCommand(string pointer, string pointedCommand, string branchPath = "")
+    public static void SetPointerCommand(string pointer, string pointedCommands, string branchPath = "")
     {
         var s = branch.Parse(branchPath, out  _);
+        string[] pcs = pointedCommands.Split('\n');
+
         s.AddBranch(new CommandBranch(pointer)
-            .Execute(arg => branch.Command(pointedCommand))
+            .Execute(arg =>
+            {
+                Result res = new Result("",true);
+                foreach (var p in pcs)
+                {
+                    var r = branch.Command(p);
+                    res &= r;
+                }
+
+                return res;
+            })
         );
     }
     public static void AddBranch(CommandBranch branch) => Program.command.AddBranch(branch);
