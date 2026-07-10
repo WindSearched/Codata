@@ -284,6 +284,28 @@ class Program
 						return new Result("confirm",true);
 					})
 				)
+				.AddBranch(new CommandBranch("exit")
+					.Execute(arg =>
+					{
+						if (info.confirmToExit)
+						{
+							Tools.SetAfterConfirm(() => form.Close());
+							return Result.confirm;
+						}
+						else
+						{
+							form.Close();
+							return new(true);
+						}
+					})
+					.AddBranch(new CommandBranch("confirm")
+						.Execute(arg =>
+						{
+							Tools.SetAfterConfirm(() => form.Close());
+							return Result.confirm;
+						})
+					)
+				)
 			;
 		command.AddBranch(command);
 

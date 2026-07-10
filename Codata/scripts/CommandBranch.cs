@@ -304,5 +304,7 @@ namespace Codata.scripts
             }
             return r;
         }
+
+        public static Result confirm = new("input confirm command to execute this command", true);
     }
 }

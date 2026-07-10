@@ -11,6 +11,7 @@ public class Info
 
 	public string user = "Codata";
     public bool debug = false;
+    public bool confirmToExit = false;
 
     public static Info ReadJson(string path)
     {
