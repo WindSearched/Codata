@@ -36,6 +36,11 @@ public class CdFunc<T,Tout>
         // C# fallback
         return func == null ? default : func(val);
     }
+    public void Clear()
+    {
+        func = null;
+        closure = null;
+    }
 }
 public class CdFunc<Tout>
 {
@@ -66,6 +71,11 @@ public class CdFunc<Tout>
         // C# fallback
         return func == null ? default : func();
     }
+    public void Clear()
+    {
+        func = null;
+        closure = null;
+    }
 }
 public class CdAction
 {
@@ -93,5 +103,11 @@ public class CdAction
 
         // C# fallback
         action?.Invoke();
+    }
+
+    public void Clear()
+    {
+        action = null;
+        closure = null;
     }
 }

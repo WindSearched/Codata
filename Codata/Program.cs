@@ -128,6 +128,7 @@ class Program
 	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
 	public static Info info;
+	public static CdAction afterConfirm;
 	public static event Action OnProgramClose;
 
 	[STAThread]
@@ -137,7 +138,8 @@ class Program
 		Data.Init();
 		Commands.Init();
 		Lua.Init();
-		info = Tools.info = Info.ReadJson(Data.infoPath);
+		info = Info.ReadJson(Data.infoPath);
+		afterConfirm = new(Lua.script);
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
@@ -242,6 +244,17 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("setting")
+					.AddBranch(new CommandBranch("recover")
+						.Execute(arg =>
+						{
+							Tools.SetAfterConfirm(() =>
+							{
+								Program.Log("test");
+							 	info = new();
+							});
+							return new Result("input confirm command to execute this command",true);
+						})
+					)
 					.AddArgument(new CommandBranch.Argument("name")
 						.SetSuggestion(() => Tools.ReflectionHelper.GetFieldsString(info))
 					)
@@ -261,6 +274,14 @@ class Program
 						Tools.DebugLog(value);
 
 						return new(true);
+					})
+				)
+				.AddBranch(new CommandBranch("confirm")
+					.Execute(arg =>
+					{
+						afterConfirm?.Invoke();
+						afterConfirm.Clear();
+						return new Result("confirm",true);
 					})
 				)
 			;

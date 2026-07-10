@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Reflection;
+using MoonSharp.Interpreter;
 
 namespace Codata.scripts;
 
 public static class Tools
 {
-    public static Info info;
+    public static Info info => Program.info;
     public static class ReflectionHelper
     {
         public static void SetFieldFromString(object obj, string fieldName, string value)
@@ -134,4 +135,6 @@ public static class Tools
         if(info.debug)
             Program.Log("[Debug]" + obj);
     }
+    public static void SetAfterConfirm(Closure closure) => Program.afterConfirm.Set(closure);
+    public static void SetAfterConfirm(Action act) => Program.afterConfirm.Set(act);
 }
