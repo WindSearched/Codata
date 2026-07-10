@@ -4,6 +4,10 @@
 public class Info
 {
     public static readonly string version = "test1.1";
+    public static readonly string author = "WindSearched";
+    public static readonly string bilibili = "https://space.bilibili.com/1611824177";
+    public static readonly string gitHub = "https://github.com/WindSearched";
+    public static readonly string codataGit = "https://github.com/WindSearched/Codata";
 
 	public string user = "Codata";
     public bool debug = false;

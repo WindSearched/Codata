@@ -124,7 +124,6 @@ class MainForm : Form
 
 class Program
 {
-	private static string author = "WindSearched";
 	public static CommandBranch command;
 	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
@@ -166,7 +165,37 @@ class Program
 		command = new CommandBranch("codata")
 				.SetSuggestion(b =>  b.branches.Select(v => v.name).ToList())
 				.AddBranch(new CommandBranch("author")
-					.Execute(_ => new(author,true)))
+					.Execute(_ => new(Info.author,true))
+					.AddBranches(
+						new CommandBranch("bilibili")
+							.Execute(_ => new(Info.bilibili,true))
+							.AddBranch(new CommandBranch("open")
+								.Execute(_ =>
+								{
+									Data.OpenForm(Info.bilibili);
+									return new(true);
+								})
+							),
+						new CommandBranch("gitHub")
+							.Execute(_ => new(Info.gitHub,true))
+							.AddBranch(new CommandBranch("open")
+								.Execute(_ =>
+								{
+									Data.OpenForm(Info.gitHub);
+									return new(true);
+								})
+							),
+						new CommandBranch("codataRepotory")
+							.Execute(_ => new(Info.codataGit, true))
+							.AddBranch(new CommandBranch("open")
+								.Execute(_ =>
+								{
+									Data.OpenForm(Info.codataGit);
+									return new(true);
+								})
+							)
+					)
+				)
 				.AddBranch(new CommandBranch("add")
 					.AddArguments(new("a"),new("b"))
 					.Execute(arg =>

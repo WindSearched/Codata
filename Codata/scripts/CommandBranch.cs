@@ -271,6 +271,10 @@ namespace Codata.scripts
             {
                 r.put = b.put;
             }
+            else
+            {
+                r.put = a.put + "\n" + b.put;
+            }
             return r;
         }
     }

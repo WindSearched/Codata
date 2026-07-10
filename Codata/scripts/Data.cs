@@ -82,6 +82,7 @@ public static class Data
             UseShellExecute = useShell
         });
     }
+    public static void OpenForm(string fileName, bool useShell) => OpenForm(fileName, "", useShell);
 
     public static bool WriteJson<T>(string path, T content, bool rewrite = true)
     {

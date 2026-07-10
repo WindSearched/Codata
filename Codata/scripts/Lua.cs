@@ -45,6 +45,7 @@ public static class Lua
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Data), "data");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(New), "new");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Commands), "cmd");
+        LuaAutoWrapper.RegisterStaticClass(script, typeof(Tools), "tools");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Tools.ReflectionHelper), "tools.refHelp");
 
 
