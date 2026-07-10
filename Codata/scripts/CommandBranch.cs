@@ -167,7 +167,11 @@ namespace Codata.scripts
 
             if (node.arguments.Count > i &&
                 node.arguments[i].suggestion != null)
-                list.AddRange(node.arguments[i].suggestion.Invoke());
+            {
+                var l = node.arguments[i].suggestion.Invoke();
+                if(l != null)
+                    list.AddRange();
+            }
 
             return list
                 .Where(x => x.StartsWith(last))
