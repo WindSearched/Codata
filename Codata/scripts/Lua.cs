@@ -51,6 +51,7 @@ public static class Lua
         UserData.RegisterType<CommandBranch>();
         UserData.RegisterType<CommandBranch.CommandArg>();
         UserData.RegisterType<CommandBranch.Argument>();
+        UserData.RegisterType<Result>();
 
     }
 
@@ -150,4 +151,5 @@ public class New
 {
     public static CommandBranch CommandBranch(string name) => new CommandBranch(name);
     public static CommandBranch.Argument Argument(string name) => new(name);
+    public static Result Result(bool a = false) => new(a);
 }

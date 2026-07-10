@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Codata.scripts.classes;
 
 namespace Codata.scripts
 {
@@ -12,12 +13,9 @@ namespace Codata.scripts
         // =========================
         // C# / Lua 双执行体系
         // =========================
-        private Func<CommandArg, Result> _csExecute;
-        private Closure _luaExecute;
-        private Script _script;
+        private CdFunc<CommandArg, Result> execute;
 
-        private Func<CommandBranch, List<string>> _csSuggestion;
-        private Closure _luaSuggestion;
+        private CdFunc<CommandBranch, List<string>> suggestion;
 
         public List<CommandBranch> branches = new();
         public List<Argument> arguments = new();
@@ -27,6 +25,8 @@ namespace Codata.scripts
         // =========================
         public CommandBranch(string name)
         {
+            execute = new(Lua.script);
+            suggestion = new(Lua.script);
             this.name = name;
         }
 
@@ -69,39 +69,23 @@ namespace Codata.scripts
         // =========================
         public CommandBranch Execute(Func<CommandArg, Result> func)
         {
-            _csExecute = func;
+            execute.Set(func);
             return this;
         }
 
         // =========================
         // Lua 执行
         // =========================
-        public CommandBranch Execute(Closure func, Script script)
+        public CommandBranch Execute(Closure func)
         {
-            _luaExecute = func;
-            _script = script;
+            execute.Set(func);
             return this;
         }
 
         // =========================
         // 统一执行入口（关键）
         // =========================
-        public Result Run(CommandArg arg)
-        {
-            // Lua 优先
-            if (_luaExecute != null)
-            {
-                var result = _script.Call(
-                    _luaExecute,
-                    DynValue.FromObject(_script, arg)
-                );
-
-                return result.ToObject<Result>();
-            }
-
-            // C# fallback
-            return _csExecute?.Invoke(arg) ?? new(false);
-        }
+        public Result Run(CommandArg arg) => execute.Invoke(arg);
 
         // =========================
         // 命令入口
@@ -158,13 +142,12 @@ namespace Codata.scripts
 
         public CommandBranch SetSuggestion(Func<CommandBranch, List<string>> func)
         {
-            _csSuggestion = func;
+            suggestion.func = func;
             return this;
         }
-        public CommandBranch SetSuggestion(Closure func, Script script)
+        public CommandBranch SetSuggestion(Closure func)
         {
-            _luaSuggestion = func;
-            _script = script;
+            suggestion.closure = func;
             return this;
         }
         public List<string> GetSuggestions(List<string> args)
@@ -179,25 +162,12 @@ namespace Codata.scripts
 
             if (i == 0)
             {
-                if (node._luaSuggestion != null)
-                {
-                    var result = node._script.Call(
-                        node._luaSuggestion,
-                        DynValue.FromObject(node._script, node)
-                    );
-
-                    foreach (var v in result.Table.Values)
-                        list.Add(v.String);
-                }
-                else if (node._csSuggestion != null)
-                {
-                    list.AddRange(node._csSuggestion(node));
-                }
+                list.AddRange(suggestion.Invoke(node));
             }
 
             if (node.arguments.Count > i &&
                 node.arguments[i].suggestion != null)
-                list.AddRange(node.arguments[i].suggestion());
+                list.AddRange(node.arguments[i].suggestion.Invoke());
 
             return list
                 .Where(x => x.StartsWith(last))
@@ -210,18 +180,25 @@ namespace Codata.scripts
         public class Argument
         {
             public string argument;
-            public Func<List<string>> suggestion;
+            public CdFunc<List<string>> suggestion;
 
             public Argument(string argument)
             {
+                suggestion = new(Lua.script);
                 this.argument = argument;
             }
 
             public Argument SetSuggestion(Func<List<string>> func)
             {
-                suggestion = func;
+                suggestion.func = func;
                 return this;
             }
+            public Argument SetSuggestion(Closure func)
+            {
+                suggestion.closure = func;
+                return this;
+            }
+
         }
 
         public class CommandArg

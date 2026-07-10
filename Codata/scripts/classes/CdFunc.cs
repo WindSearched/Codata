@@ -37,3 +37,33 @@ public class CdFunc<T,Tout>
         return func == null ? default : func(val);
     }
 }
+public class CdFunc<Tout>
+{
+    public Script script;
+    public Closure closure;
+    public Func<Tout> func;
+
+    public CdFunc(Script script, Closure closure = null)
+    {
+        this.script = script;
+        this.closure = closure;
+    }
+
+    public void Set(Func<Tout> func) =>  this.func = func;
+    public void Set(Closure closure) => this.closure = closure;
+
+    public Tout Invoke()
+    {
+        if (closure != null)
+        {
+            var result = script.Call(
+                closure
+            );
+
+            return result.ToObject<Tout>();
+        }
+
+        // C# fallback
+        return func == null ? default : func();
+    }
+}
