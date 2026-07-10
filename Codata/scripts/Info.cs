@@ -3,7 +3,7 @@
 
 public class Info
 {
-    public static readonly string version = "test1.1";
+    public static readonly string version = "test3";
     public static readonly string author = "WindSearched";
     public static readonly string bilibili = "https://space.bilibili.com/1611824177";
     public static readonly string gitHub = "https://github.com/WindSearched";

@@ -41,7 +41,6 @@ public static class Lua
         void r (string name, object? o) => s.Globals[name] = o;
         r("log", (Action<object>)Program.Log);
 
-        //script.Globals["data"] = UserData.Create(new DataLua());
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Data), "data");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(New), "new");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Commands), "cmd");
