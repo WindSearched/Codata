@@ -67,3 +67,31 @@ public class CdFunc<Tout>
         return func == null ? default : func();
     }
 }
+public class CdAction
+{
+    public Script script;
+    public Closure closure;
+    public Action action;
+
+    public CdAction(Script script, Closure closure = null)
+    {
+        this.script = script;
+        this.closure = closure;
+    }
+
+    public void Set(Action func) =>  this.action = func;
+    public void Set(Closure closure) => this.closure = closure;
+
+    public void Invoke()
+    {
+        if (closure != null)
+        {
+            var result = script.Call(
+                closure
+            );
+        }
+
+        // C# fallback
+        action?.Invoke();
+    }
+}
