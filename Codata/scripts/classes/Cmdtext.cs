@@ -1,6 +1,4 @@
-﻿using ScintillaNET;
-
-namespace Codata.scripts.classes;
+﻿namespace Codata.scripts.classes;
 
 public class Cmdtext : TextBox
 {
