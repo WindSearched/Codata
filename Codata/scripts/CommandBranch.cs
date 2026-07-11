@@ -196,27 +196,28 @@ namespace Codata.scripts
             }
 
             var rl = list.Where(x => x.StartsWith(last)).ToList();
-            return new(rl, GetSuggestionTag(rl.Count == 0 ? null : node, i));
+            return new(rl, GetSuggestionTag(node, i,rl.Count == 0));
         }
 
-        public string GetSuggestionTag(CommandBranch node,int count)
+        public string GetSuggestionTag(CommandBranch node,int count, bool brancheNotFound)
         {
             string t = "";
 
             void add(string s) => t += t == "" ? s : "/" + s;
 
-            if (node == null)
-            {
-                add("<branch not found>");
-                return t;
-            }
+            bool a = node.arguments.Count > 0;
 
-            if (node.branches.Count > 0)
+            if (brancheNotFound)
+            {
+                if(!a)
+                    add("<branch not found>");
+            }
+            else if (node.branches.Count > 0)
             {
                 add("<branch>");
             }
 
-            if (count > 0 && node.arguments.Count > 0)
+            if (node.arguments.Count > 0 && count < node.arguments.Count)
             {
                 add($"<{node.arguments[count].argument}>");
             }
