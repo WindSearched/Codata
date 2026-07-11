@@ -16,7 +16,7 @@ class MainForm : Form
 	public bool shift;
 
 	public ListBox  ListBox;
-	public TextBox textBox;
+	public Cmdtext textBox;
 	public RichTextBox rtb;
 	public MainForm()
 	{
@@ -24,9 +24,12 @@ class MainForm : Form
 
 		this.ClientSize = new Size(800, 400);
 
-		TextBox textBox = this.textBox = new TextBox();
-		textBox.Location = new System.Drawing.Point(40, 347);
-		textBox.Width = 645;
+		Cmdtext textBox = this.textBox = new ();
+		//textBox.BorderStyle = BorderStyle.None;
+		//textBox.Multiline = false;
+		textBox.Font = new("Calibri", 11);
+		textBox.Size = new Size(645, 23);
+		//textBox.Width = 645;
 		textBox.PreviewKeyDown += (s, e) =>
 		{
 			if (e.KeyCode == Keys.Tab ||  e.KeyCode == Keys.Shift)
@@ -39,13 +42,24 @@ class MainForm : Form
 			if (e.KeyCode == Keys.Tab)
 			{
 				e.SuppressKeyPress = true; // 阻止跳转
-				Console.WriteLine("tab");
 				OnTabDown?.Invoke();
 			}
 		};
+		//Panel box = new Panel();
+
+		//box.BorderStyle = BorderStyle.FixedSingle;
+		//box.Size = textBox.Size;
+		textBox.Location = new System.Drawing.Point(40, 347);
+
+		//textBox.Dock = DockStyle.Fill;
+
+		Controls.Add(textBox.hint);
+		//box.Controls.Add(textBox);
+		Controls.Add(textBox);
 
 		Button button = new Button();
 		button.Text = "enter";
+		Program.Log(button.Font.Name);
 		button.Location = new System.Drawing.Point(685, 347);
 		void click()
 		{
@@ -67,7 +81,6 @@ class MainForm : Form
 		textBox.KeyDown += Keydown;
 		textBox.KeyUp += Keyup;
 
-		Controls.Add(textBox);
 		Controls.Add(button);
 		this.KeyPreview = true;
 
@@ -144,11 +157,16 @@ class Program
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
 		form = new MainForm();
-		form.textBox.TextChanged += (_,_) =>
+		form.textBox.WhenTextChanged += (_,_) =>
 		{
+			if(form.textBox.Text.Length <= 0)
+				return;
 			var s = form.textBox.Text;
 			var l = s.Split(' ');
-			form.ListBox.DataSource = command.GetSuggestions(l.ToList());
+
+			var v = command.GetSuggestions(l.ToList());
+			form.ListBox.DataSource = v.list;
+			form.textBox.SetSuggestion(v.tag);
 		};
 
 		BindingKeys();
@@ -324,9 +342,12 @@ class Program
 
 			c = index != -1 ? c.Substring(0, index+1) : "";
 			c += s + ' ';
-			form.textBox.Text = c;
-			form.textBox.SelectionStart = form.textBox.Text.Length;
-			form.textBox.SelectionLength = 0;
+
+			var t = form.textBox;
+			t.canChange = false;
+			t.Clear();
+			t.canChange = true;
+			t.Append(c);
 		};
 		form.OnDownDown += () =>
 		{

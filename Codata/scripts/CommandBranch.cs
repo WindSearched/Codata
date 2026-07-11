@@ -171,7 +171,7 @@ namespace Codata.scripts
             suggestion.closure = func;
             return this;
         }
-        public List<string> GetSuggestions(List<string> args)
+        public (List<string> list, string tag) GetSuggestions(List<string> args)
         {
             var last = args.Last();
             args.RemoveAt(args.Count - 1);
@@ -183,6 +183,7 @@ namespace Codata.scripts
 
             if (i == 0)
             {
+                //add branches
                 list.AddRange(suggestion.Invoke(node));
             }
 
@@ -194,9 +195,33 @@ namespace Codata.scripts
                     list.AddRange(l);
             }
 
-            return list
-                .Where(x => x.StartsWith(last))
-                .ToList();
+            var rl = list.Where(x => x.StartsWith(last)).ToList();
+            return new(rl, GetSuggestionTag(rl.Count == 0 ? null : node, i));
+        }
+
+        public string GetSuggestionTag(CommandBranch node,int count)
+        {
+            string t = "";
+
+            void add(string s) => t += t == "" ? s : "/" + s;
+
+            if (node == null)
+            {
+                add("<branch not found>");
+                return t;
+            }
+
+            if (node.branches.Count > 0)
+            {
+                add("<branch>");
+            }
+
+            if (count > 0 && node.arguments.Count > 0)
+            {
+                add($"<{node.arguments[count].argument}>");
+            }
+
+            return t;
         }
 
         public CommandBranch ActiveParam()
