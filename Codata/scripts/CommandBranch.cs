@@ -127,7 +127,7 @@ namespace Codata.scripts
             if (param && branchEqual.Count == 0)
             {
                 //all after slipts is arg
-                for (int i = 0; i < arguments.Count; i++)
+                for (int i = 0; i < split.Count; i++)
                 {
                     args.SetArg("param" + i, split[i]);
                 }

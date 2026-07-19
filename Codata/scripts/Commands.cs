@@ -66,4 +66,6 @@ public static class Commands
 
         return result;
     }
+
+    public static string GetParamIndex(int index) => "param" + index;
 }

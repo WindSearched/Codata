@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using Codata.scripts;
 using Codata.scripts.classes;
+using Codata.scripts.commandBranches;
 
 class MainForm : Form
 {
@@ -159,8 +160,6 @@ class Program
 		form = new MainForm();
 		form.textBox.WhenTextChanged += (_,_) =>
 		{
-			if(form.textBox.Text.Length <= 0)
-				return;
 			var s = form.textBox.Text;
 			var l = s.Split(' ');
 
@@ -324,6 +323,7 @@ class Program
 						})
 					)
 				)
+				.AddBranch(_math.math)
 			;
 		command.AddBranch(command);
 
