@@ -94,6 +94,22 @@ namespace Codata.scripts
         // =========================
         public Result Run(CommandArg arg) => execute.Invoke(arg);
 
+        public CommandBranch SetParamExecute<Tval, Tres>(Func<string,Tval> newer, Func<Tval[], Tres> replacer, Func<Tres, Result> result)
+        {
+            execute.Set((arg) =>
+            {
+                Tval[] vals = new Tval [arg.args.Count];
+                for (int i = 0; i < vals.Length; i++)
+                {
+                    vals[i] = newer(arg.ParamGet(i));
+                }
+                Tres r = replacer(vals);
+                return result(r);
+            });
+
+            return this;
+        }
+
         // =========================
         // 命令入口
         // =========================
@@ -264,6 +280,9 @@ namespace Codata.scripts
 
             public string Get(string key)
                 => args.TryGetValue(key, out var v) ? v : "";
+
+            public string ParamGet(int index)
+                => Get("param" + index);
             public bool TryGet(string key, out string value) => args.TryGetValue(key, out value);
 
             public int GetInt(string key)
