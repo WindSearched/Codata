@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Codata.scripts.commandBranches;
 using Microsoft.VisualBasic.Logging;
 
 namespace Codata.scripts;
@@ -46,6 +47,7 @@ public static class Lua
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Commands), "cmd");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Tools), "tools");
         LuaAutoWrapper.RegisterStaticClass(script, typeof(Tools.ReflectionHelper), "tools.refHelp");
+        LuaAutoWrapper.RegisterStaticClass(script, typeof(SMath), "math");
 
 
         UserData.RegisterType<CommandBranch>();

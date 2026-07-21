@@ -1,6 +1,6 @@
 ﻿namespace Codata.scripts.commandBranches;
 
-public static class _math
+public static class SMath
 {
     public static int Add(params int[] vals)
     {

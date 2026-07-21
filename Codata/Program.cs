@@ -323,7 +323,7 @@ class Program
 						})
 					)
 				)
-				.AddBranch(_math.math)
+				.AddBranch(SMath.math)
 			;
 		command.AddBranch(command);
 
