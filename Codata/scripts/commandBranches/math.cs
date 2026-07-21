@@ -2,6 +2,47 @@
 
 public static class _math
 {
+    public static int Add(params int[] vals)
+    {
+        if (vals == null || vals.Length == 0) return 0;
+        int r = vals[0];
+        for (int i = 1; i < vals.Length; i++)
+        {
+            r += vals[i];
+        }
+        return r;
+    }
+    public static float Add(params float[] vals)
+    {
+        if (vals == null || vals.Length == 0) return 0;
+        float r = vals[0];
+        for (int i = 1; i < vals.Length; i++)
+        {
+            r += vals[i];
+        }
+        return r;
+    }
+    public static int Subtract(params int[] vals)
+    {
+        if (vals == null || vals.Length == 0) return 0;
+        int r = vals[0];
+        for (int i = 1; i < vals.Length; i++)
+        {
+            r -= vals[i];
+        }
+        return r;
+    }
+    public static float Subtract(params float[] vals)
+    {
+        if (vals == null || vals.Length == 0) return 0;
+        float r = vals[0];
+        for (int i = 1; i < vals.Length; i++)
+        {
+            r -= vals[i];
+        }
+        return r;
+    }
+
     /// <summary>
     /// get the greatest common divisor of two numbers
     /// </summary>
@@ -54,16 +95,11 @@ public static class _math
     public static CommandBranch math = new CommandBranch("math")
         .AddBranches(
             new CommandBranch("add")
-                .AddArguments(
-                        new CommandBranch.Argument("a"),
-                        new CommandBranch.Argument("b")
-                    )
-                .Execute(args =>
-                {
-                    double a = double.Parse(args.Get("a"));
-                    double b = double.Parse(args.Get("b"));
-                    return new Result((a + b).ToString(), true);
-                }),
+                .ActiveParam()
+                .SetParamExecute(int.Parse, Add, i => new(i.ToString(), true)),
+            new CommandBranch("subtract")
+                .ActiveParam()
+                .SetParamExecute(float.Parse, Subtract, f => new(f.ToString(), true)),
             new CommandBranch("gcd")
                 .ActiveParam()
                 .Execute(args =>
