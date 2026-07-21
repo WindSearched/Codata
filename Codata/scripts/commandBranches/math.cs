@@ -96,7 +96,7 @@ public static class _math
         .AddBranches(
             new CommandBranch("add")
                 .ActiveParam()
-                .SetParamExecute(int.Parse, Add, i => new(i.ToString(), true)),
+                .SetParamExecute(float.Parse, Add, i => new(i.ToString(), true)),
             new CommandBranch("subtract")
                 .ActiveParam()
                 .SetParamExecute(float.Parse, Subtract, f => new(f.ToString(), true)),
