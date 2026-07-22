@@ -12,4 +12,14 @@
       <PackageReference Include="MoonSharp" Version="2.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="resources\thubtack.jpg" />
+      <None Remove="resources\图钉.jpg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="resources\thumbtack.png" />
+      <EmbeddedResource Include="resources\thumbtack.png" />
+    </ItemGroup>
+
 </Project>

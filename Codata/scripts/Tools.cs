@@ -126,6 +126,29 @@ public static class Tools
             return fields.Select(field => field.Name).Select(value => value?.ToString() ?? "null").ToList();
         }
     }
+    public static class ImageTools
+    {
+        public static bool IsFullyTransparent(Image image)
+        {
+            using (Bitmap bmp = new Bitmap(image))
+            {
+                for (int x = 0; x < bmp.Width; x++)
+                {
+                    for (int y = 0; y < bmp.Height; y++)
+                    {
+                        Color pixel = bmp.GetPixel(x, y);
+
+                        if (pixel.A != 0)
+                        {
+                            return false; // 有一个像素不是透明
+                        }
+                    }
+                }
+            }
+
+            return true;
+        }
+    }
 
     /// <summary>
     /// log only the debug setting is active

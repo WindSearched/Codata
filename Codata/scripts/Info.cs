@@ -1,4 +1,6 @@
-﻿namespace Codata.scripts;
+﻿using System.Text.Json.Serialization;
+
+namespace Codata.scripts;
 
 
 public class Info
@@ -12,6 +14,11 @@ public class Info
 	public string user = "Codata";
     public bool debug = false;
     public bool confirmToExit = false;
+
+    [JsonIgnore]
+    public int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+    [JsonIgnore]
+    public int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
     public static Info ReadJson(string path)
     {

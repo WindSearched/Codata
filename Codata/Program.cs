@@ -144,10 +144,13 @@ class Program
 	public static Info info;
 	public static CdAction afterConfirm;
 	public static event Action OnProgramClose;
+	public static PointCapturer capturer;
 
 	[STAThread]
 	static void Main()
 	{
+		capturer = new();
+
 		RegisterCommands();
 		Data.Init();
 		Commands.Init();
@@ -324,6 +327,13 @@ class Program
 					)
 				)
 				.AddBranch(SMath.math)
+				.AddBranch(new CommandBranch("capture")
+					.Execute(arg =>
+					{
+						Program.capturer.Start();
+						return new Result(true);
+					})
+				)
 			;
 		command.AddBranch(command);
 
