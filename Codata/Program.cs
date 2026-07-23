@@ -205,7 +205,6 @@ class Program
 	static void RegisterCommands()
 	{
 		command = new CommandBranch("codata")
-				.SetSuggestion(b =>  b.branches.Select(v => v.name).ToList())
 				.AddBranch(new CommandBranch("author")
 					.Execute(_ => new(Info.author,true))
 					.AddBranches(
@@ -347,6 +346,7 @@ class Program
 					)
 				)
 				.AddBranch(SMath.math)
+				.AddBranch(Geometry.branch)
 				.AddBranch(new CommandBranch("capture")
 					.Execute(arg =>
 					{
