@@ -92,6 +92,10 @@ public static class SMath
         return res;
     }
 
+    public static double Pow(double a, double b) => Math.Pow(a, b);
+    public static double Root(double n, double root) => Pow(n, 1/root);
+    public static double Sqrt(float a) => Math.Sqrt(a);
+
     public static CommandBranch math = new CommandBranch("math")
         .AddBranches(
             new CommandBranch("add")
