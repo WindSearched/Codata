@@ -19,6 +19,9 @@
 
     <ItemGroup>
       <None Remove="resources\thumbtack.png" />
+    </ItemGroup>
+
+    <ItemGroup>
       <EmbeddedResource Include="resources\thumbtack.png" />
     </ItemGroup>
 

@@ -140,6 +140,7 @@ public static class Tools
 
                         if (pixel.A != 0)
                         {
+                            Program.Log(pixel.A);
                             return false; // 有一个像素不是透明
                         }
                     }

@@ -5,9 +5,12 @@ namespace Codata.scripts;
 public class PointCapturer
 {
     public PointCapturerForm capturerForm;
+    private int captureTimes;
     public event Action OnLeftMouseClick;
-    public void Start()
+    public void Start(int captureTimes_, Func<List<Point>, string> resultCreator)
     {
+        captureTimes = captureTimes_;
+
         capturerForm = new PointCapturerForm();
         capturerForm.Show();
 
@@ -17,7 +20,7 @@ public class PointCapturer
             Program.form.WindowState = FormWindowState.Normal;
 
         capturerForm.BackColor = Color.Gray;
-        //capturerForm.Opacity = 0.3;
+        capturerForm.Opacity = 0.3;
 
         Image image = GetPic();
 
@@ -31,17 +34,37 @@ public class PointCapturer
         Program.Log(Tools.ImageTools.IsFullyTransparent(image));
         OnLeftMouseClick += () =>
         {
+            float s = 0.5f;
+
             PictureBox pic = new();
-            pic.BackColor = Color.Red;
+            pic.SizeMode = PictureBoxSizeMode.Zoom;
+            pic.Size = new((int)(image.Width * s), (int)(image.Height * s));
             pic.Image = image;
-            pic.Location = GetCursorPosition();
+
+            Point p = GetCursorPosition();
+            pic.Location = new(
+                p.X - pic.Width / 2,
+                p.Y - pic.Height
+            );
+            capturerForm.points.Add(p);
+
             capturerForm.Controls.Add(pic);
-            Program.Log("image");
+
+            capturerForm.DrawLine(capturerForm.points.Count -1, Color.Red);
+
+            if (--captureTimes == 0)
+            {
+                capturerForm.Close();
+            }
         };
 
+        capturerForm.Closed += (_, _) =>
+        {
+            Program.form.Log(resultCreator(capturerForm.points), capturerForm.Text);
+        };
     }
 
-    public Point GetCursorPosition() => Cursor.Position;
+    public Point GetCursorPosition() => capturerForm.PointToClient(Cursor.Position);
     public Image GetPic()
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -62,9 +85,33 @@ public class PointCapturer
 
 public class PointCapturerForm : Form
 {
+    public List<Point> points;
     public PointCapturerForm()
     {
         Text = "capturer";
+        points = new();
 
+    }
+
+    /// <summary>
+    /// dra line with point on index and that on back index
+    /// </summary>
+    public void DrawLine(int index, Color color) => DrawLine(index, index - 1, color);
+    public void DrawLine(int index1, int index2, Color color)
+    {
+        if(index1 < 0 || index2 < 0 ||points.Count <= index1 || points.Count <= index2)
+            return;
+        DrawLine(points[index1], points[index2],  color);
+    }
+    public void DrawLine(Point p1, Point p2, Color color)
+    {
+        Paint += (sender, args) =>
+        {
+            using (Pen pen = new Pen(color, 2))
+            {
+                args.Graphics.DrawLine(pen, p1.X, p1.Y, p2.X, p2.Y);
+            }
+        };
+        Refresh();
     }
 }

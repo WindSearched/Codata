@@ -65,14 +65,12 @@ class MainForm : Form
 		void click()
 		{
 			string cmd = textBox.Text.Trim(' ');
-			void add(string s) => this.rtb.Text += s;
 
-			this.rtb.Text += cmd + "\n";
 			var result = Program.command.Command(cmd);
-			this.rtb.Text += result.put + "\n";
+
+			Log(cmd + "\n" + result.put);
 			textBox.Text = "";
 
-			add(Program.PutUser());
 			Program.commandTube.Add(cmd);
 			Program.commandTube.RevertPointer();
 		}
@@ -132,6 +130,28 @@ class MainForm : Form
 				OnShiftUp?.Invoke();
 				break;
 		}
+	}
+
+	public void Log(string message, string user = "")
+	{
+		if (user == "")
+			user = GetUser;
+		RemovePreviewUser();
+		rtb.Text += user + ">" + message;
+		SetPreviewUser();
+	}
+
+	public string GetUser => Program.info.user;
+
+	public void SetPreviewUser()
+	{
+		rtb.Text += (rtb.Text.EndsWith('\n') ? "" : "\n") + GetUser + ">";
+	}
+	public void RemovePreviewUser()
+	{
+		string t = rtb.Text;
+		string u = GetUser + ">";
+		rtb.Text = t.Remove(t.Length - u.Length, u.Length);
 	}
 }
 
@@ -330,7 +350,18 @@ class Program
 				.AddBranch(new CommandBranch("capture")
 					.Execute(arg =>
 					{
-						Program.capturer.Start();
+						Program.capturer.Start(3,
+							ps =>
+							{
+								string s = "";
+								foreach (var p in ps)
+								{
+									s += p + "\n";
+								}
+
+								s = s.TrimEnd('\n');
+								return s;
+							});
 						return new Result(true);
 					})
 				)
