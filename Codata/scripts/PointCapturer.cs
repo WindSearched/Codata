@@ -4,12 +4,17 @@ namespace Codata.scripts;
 
 public class PointCapturer
 {
+    /// <summary>
+    /// a default result template
+    /// </summary>
+    public static Result result = new Result("open the point capturer", true);
+
     public PointCapturerForm capturerForm;
     private int captureTimes;
-    public event Action OnLeftMouseClick;
+    private int curCaptureTimes;
     public void Start(int captureTimes_, Func<List<Point>, string> resultCreator)
     {
-        captureTimes = captureTimes_;
+        captureTimes = curCaptureTimes = captureTimes_;
 
         capturerForm = new PointCapturerForm();
         capturerForm.Show();
@@ -19,20 +24,13 @@ public class PointCapturer
         capturerForm.FormClosing += (_, _) =>
             Program.form.WindowState = FormWindowState.Normal;
 
-        capturerForm.BackColor = Color.Gray;
+        capturerForm.BackColor = Color.Black;
         capturerForm.Opacity = 0.3;
 
         Image image = GetPic();
 
-        capturerForm.MouseClick += (sender, arg) =>
-        {
-            if(arg.Button == MouseButtons.Left)
-            {
-                OnLeftMouseClick?.Invoke();
-            }
-        };
         Program.Log(Tools.ImageTools.IsFullyTransparent(image));
-        OnLeftMouseClick += () =>
+            capturerForm.OnLeftMouseClick += () =>
         {
             float s = 0.5f;
 
@@ -50,9 +48,9 @@ public class PointCapturer
 
             capturerForm.Controls.Add(pic);
 
-            capturerForm.DrawLine(capturerForm.points.Count -1, Color.Red);
+            capturerForm.DrawLine(capturerForm.points.Count -1, Color.White);
 
-            if (--captureTimes == 0)
+            if (--curCaptureTimes == 0)
             {
                 capturerForm.Close();
             }
@@ -60,7 +58,10 @@ public class PointCapturer
 
         capturerForm.Closed += (_, _) =>
         {
-            Program.form.Log(resultCreator(capturerForm.points), capturerForm.Text);
+            if(capturerForm.points.Count >=  captureTimes)
+                Program.form.Log(resultCreator(capturerForm.points), capturerForm.Text);
+            else
+                Program.form.Log("cannot capture more points than " + captureTimes, capturerForm.Text);
         };
     }
 
@@ -86,12 +87,22 @@ public class PointCapturer
 public class PointCapturerForm : Form
 {
     public List<Point> points;
+    public event Action OnLeftMouseClick;
+
     public PointCapturerForm()
     {
         Text = "capturer";
         points = new();
 
+        MouseClick += (sender, arg) =>
+        {
+            if(arg.Button == MouseButtons.Left)
+            {
+                OnLeftMouseClick?.Invoke();
+            }
+        };
     }
+
 
     /// <summary>
     /// dra line with point on index and that on back index
