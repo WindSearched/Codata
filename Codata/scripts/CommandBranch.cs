@@ -10,9 +10,6 @@ namespace Codata.scripts
     {
         public string name;
 
-        // =========================
-        // C# / Lua 双执行体系
-        // =========================
         private CdFunc<CommandArg, Result> execute;
 
         private CdFunc<CommandBranch, List<string>> suggestion;
@@ -27,9 +24,12 @@ namespace Codata.scripts
         /// </summary>
         public bool param = false;
 
-        // =========================
-        // 构造
-        // =========================
+        /// <summary>
+        /// abbreviation branch name
+        /// </summary>
+        public string abbreviation;
+
+
         public CommandBranch(string name)
         {
             execute = new(Lua.script);
@@ -138,7 +138,7 @@ namespace Codata.scripts
             }
 
             var head = split[0];
-            var branchEqual = branches.Where(x => x.name == head).ToList();
+            var branchEqual = branches.Where(x => x.name == head || x.abbreviation == head).ToList();
 
             if (param && branchEqual.Count == 0)
             {
@@ -152,7 +152,7 @@ namespace Codata.scripts
             else
             {
                 //when head is branch
-                foreach (var b in branches.Where(x => x.name == head))
+                foreach (var b in branchEqual)
                 {
                     split.RemoveAt(0);
                     return b.Parse(split, out args);
@@ -200,7 +200,9 @@ namespace Codata.scripts
             if (i == 0)
             {
                 //add branches
-                list.AddRange(suggestion.Invoke(node));
+                list.AddRange(node.branches.SelectMany(v => v.abbreviation == null
+                    ? new[] { v.name }
+                    : new[] { v.abbreviation , v.name }));
             }
 
             if (node.arguments.Count > i &&
@@ -244,6 +246,12 @@ namespace Codata.scripts
         public CommandBranch ActiveParam()
         {
             param = true;
+            return this;
+        }
+
+        public CommandBranch SetAbbreviation(string abbreviation)
+        {
+            this.abbreviation = abbreviation;
             return this;
         }
 
