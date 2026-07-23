@@ -136,9 +136,16 @@ class MainForm : Form
 	{
 		if (user == "")
 			user = GetUser;
+
 		RemovePreviewUser();
-		rtb.Text += user + ">" + message;
+
+		rtb.AppendText(user + ">" + message);
+
 		SetPreviewUser();
+
+		rtb.SelectionStart = rtb.TextLength;
+		rtb.SelectionLength = 0;
+		rtb.ScrollToCaret();
 	}
 
 	public string GetUser => Program.info.user;
