@@ -150,6 +150,17 @@ public static class Tools
             return true;
         }
     }
+    public static class Strings
+    {
+        /// <summary>
+        /// detect last index of cutter char, and split str in two part
+        /// </summary>
+        public static (string s1, string s2) SplitInLastIndexOf(string str, string cutter)
+        {
+            int ind = str.LastIndexOf(cutter);
+            return new(str.Substring(0, ind + 1), str.Substring(ind + 1));
+        }
+    }
 
     /// <summary>
     /// log only the debug setting is active

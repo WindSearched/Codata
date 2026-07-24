@@ -11,6 +11,8 @@ class MainForm : Form
 	public event Action<string> OnKeyDown;
 	public event Action OnTabDown;
 	public event Action OnDownDown;
+	public event Action OnRightDown;
+	public event Action OnLeftDown;
 	public event Action OnUpDown;
 	public event Action OnShiftDown;
 	public event Action OnShiftUp;
@@ -33,7 +35,12 @@ class MainForm : Form
 		//textBox.Width = 645;
 		textBox.PreviewKeyDown += (s, e) =>
 		{
-			if (e.KeyCode == Keys.Tab ||  e.KeyCode == Keys.Shift)
+			if (e.KeyCode is Keys.Tab
+			    or Keys.Shift
+			    or Keys.Up
+			    or Keys.Down
+			    or Keys.Left
+			    or Keys.Right)
 			{
 				e.IsInputKey = true; //告诉系统这是输入键
 			}
@@ -73,6 +80,7 @@ class MainForm : Form
 
 			Program.commandTube.Add(cmd);
 			Program.commandTube.RevertPointer();
+			Program.argstack.Clear();
 		}
 		Program.Log(button.Width);
 		button.Click += (s, e) => click();
@@ -103,16 +111,32 @@ class MainForm : Form
 	{
 		OnKeyDown?.Invoke(e.KeyCode.ToString());
 
+		void notCHangeText()
+		{
+			e.Handled = true;
+			e.SuppressKeyPress = true;
+		}
+
 		switch (e.KeyCode)
 		{
 			case Keys.Enter:
 				OnEnterKeyDown?.Invoke();
 				break;
 			case Keys.Down:
+				notCHangeText();
 				OnDownDown?.Invoke();
 				break;
 			case Keys.Up:
+				notCHangeText();
 				OnUpDown?.Invoke();
+				break;
+			case Keys.Left:
+				notCHangeText();
+				OnLeftDown?.Invoke();
+				break;
+			case Keys.Right:
+				notCHangeText();
+				OnRightDown?.Invoke();
 				break;
 			case Keys.ShiftKey:
 				OnShiftDown?.Invoke();
@@ -172,6 +196,7 @@ class Program
 	public static CdAction afterConfirm;
 	public static event Action OnProgramClose;
 	public static PointCapturer capturer;
+	public static Stack<string> argstack = new();
 
 	[STAThread]
 	static void Main()
@@ -449,6 +474,18 @@ class Program
 				}
 			}
 
+		};
+		form.OnLeftDown += () =>
+		{
+			if(!form.shift) return;
+			var ss = Tools.Strings.SplitInLastIndexOf(form.textBox.Text.TrimEnd(' '), " ");
+			argstack.Push(ss.s2);
+			form.textBox.Text = ss.s1;
+		};
+		form.OnRightDown += () =>
+		{
+			if(!form.shift || argstack.Count == 0) return;
+			form.textBox.Text += form.textBox.Text.EndsWith(' ') || form.textBox.Text == "" ? argstack.Pop() + " " : " " + argstack.Pop() + " ";
 		};
 		form.OnShiftDown += () => form.shift = true;
 		form.OnShiftUp += () => form.shift = false;
