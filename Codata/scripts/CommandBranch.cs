@@ -214,7 +214,7 @@ namespace Codata.scripts
             }
 
             var rl = list.Where(x => x.StartsWith(last)).ToList();
-            return new(rl, GetSuggestionTag(node, i,rl.Count == 0));
+            return new(rl, GetSuggestionTag(node, i, last != "" && rl.Count == 0));
         }
 
         public string GetSuggestionTag(CommandBranch node,int count, bool brancheNotFound)
