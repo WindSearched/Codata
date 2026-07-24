@@ -219,13 +219,18 @@ namespace Codata.scripts
 
         public string GetSuggestionTag(CommandBranch node,int count, bool brancheNotFound)
         {
+            Program.Log(count.ToString());
             string t = "";
 
             void add(string s) => t += t == "" ? s : "/" + s;
 
             bool a = node.arguments.Count > 0;
 
-            if (brancheNotFound)
+            if (node.param)
+            {
+                add($"<param{count+1}>>");
+            }
+            else if (brancheNotFound)
             {
                 if(!a)
                     add("<branch not found>");
