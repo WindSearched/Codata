@@ -16,6 +16,7 @@ namespace Codata.scripts
 
         public List<CommandBranch> branches = new();
         public List<Argument> arguments = new();
+        public string description;
 
         /// <summary>
         /// if it is true in parse time detect if the head splits is branches,
@@ -124,7 +125,7 @@ namespace Codata.scripts
         // =========================
         public CommandBranch Parse(string path, out CommandArg args)
         {
-            var split = Commands.ParseArgs(path.Trim());
+            var split = Commands.ParseArgs(path);
             return Parse(split, out args);
         }
 
@@ -189,6 +190,10 @@ namespace Codata.scripts
         }
         public (List<string> list, string tag) GetSuggestions(List<string> args)
         {
+            if (args.Count == 0)
+            {
+                args.Add("");
+            }
             var last = args.Last();
             args.RemoveAt(args.Count - 1);
 
@@ -219,7 +224,6 @@ namespace Codata.scripts
 
         public string GetSuggestionTag(CommandBranch node,int count, bool brancheNotFound)
         {
-            Program.Log(count.ToString());
             string t = "";
 
             void add(string s) => t += t == "" ? s : "/" + s;
@@ -257,6 +261,12 @@ namespace Codata.scripts
         public CommandBranch SetAbbreviation(string abbreviation)
         {
             this.abbreviation = abbreviation;
+            return this;
+        }
+
+        public CommandBranch SetDescription(string description)
+        {
+            this.description = description;
             return this;
         }
 

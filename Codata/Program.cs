@@ -216,7 +216,8 @@ class Program
 		form.textBox.WhenTextChanged += (_,_) =>
 		{
 			var s = form.textBox.Text;
-			var l = s.Split(' ');
+			var l = Tools.Strings.SplitAndRemoveEmpties(s, " ");
+			//var l = s.Split(" ");
 
 			var v = command.GetSuggestions(l.ToList());
 			form.ListBox.DataSource = v.list;

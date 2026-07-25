@@ -160,6 +160,12 @@ public static class Tools
             int ind = str.LastIndexOf(cutter);
             return new(str.Substring(0, ind + 1), str.Substring(ind + 1));
         }
+
+        public static string[] SplitAndRemoveEmpties(string str, string cutter)
+        {
+            var s = str.Split(cutter);
+            return s.Where(x => x!= "").ToArray();
+        }
     }
 
     /// <summary>
