@@ -19,9 +19,19 @@ public class Langue
         var s = dict.ToString();
         return language + s;
     }
-    public static SDict<string,string> Read(string language, string path)
+
+    public static SDict<string, string> Read(string language, string[] paths, SDict<string, string> dict = null)
     {
-        SDict<string, string> dict = new();
+        dict ??= new();
+        foreach (string path in paths)
+        {
+            Read(language, path, dict);
+        }
+        return dict;
+    }
+    public static SDict<string,string> Read(string language, string path, SDict<string, string> dict = null)
+    {
+        dict ??= new();
         string[] lines = Data.ReadFileInLines(path);
 
         string prefix = "", suffix = "";
@@ -54,9 +64,9 @@ public class Langue
         }
         return dict;
     }
-    public static SDict<string,string> Read(string path)
+    public static SDict<string,string> Read(string path, SDict<string, string> dict = null)
     {
-        SDict<string, string> dict = new();
+        dict ??= new();
         string[] lines = Data.ReadFileInLines(path);
 
         string language = "en";

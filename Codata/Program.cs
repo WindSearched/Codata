@@ -16,6 +16,7 @@ class Program
 	public static event Action OnProgramClose;
 	public static PointCapturer capturer;
 	public static Stack<string> argstack = new();
+	public static Langue langue;
 
 	[STAThread]
 	static void Main()
