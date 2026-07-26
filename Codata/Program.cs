@@ -36,7 +36,6 @@ class Program
 		{
 			var s = form.textBox.Text;
 			var l = Tools.Strings.SplitAndRemoveRepeatedEmpties(s, " ");
-			//var l = s.Split(" ");
 
 			var v = command.GetSuggestions(l.ToList(), out var branch);
 			if(info.viewDescription)
@@ -59,6 +58,7 @@ class Program
 	static void RegisterCommands()
 	{
 		command = new CommandBranch("codata")
+				.Execute(_ => new Result("welcome to codata! ฅ՞Ⱉ՞ฅ",true))
 				.AddBranch(new CommandBranch("author")
 					.SetDescription("some information of Codata's author")
 					.Execute(_ => new(Info.author,true))
