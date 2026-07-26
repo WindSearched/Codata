@@ -1,7 +1,4 @@
-﻿using System;
-using System.Reflection;
-using System.Windows.Forms;
-using Codata;
+﻿using Codata;
 using Codata.scripts;
 using Codata.scripts.classes;
 using Codata.scripts.commandBranches;
