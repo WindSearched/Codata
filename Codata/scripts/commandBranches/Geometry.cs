@@ -35,9 +35,11 @@ public static class Geometry
     public static CommandBranch branch =
         new CommandBranch("geometry")
             .SetAbbreviation("geom")
+            .SetDescription("geometrical commands")
             .AddBranches(
                 new CommandBranch("length")
                     .SetAbbreviation("distance")
+                    .SetDescription("calculate the distance of two point [pointCapturer]")
                     .Execute(_ =>
                     {
                         Program.capturer.Start(2,
@@ -45,6 +47,7 @@ public static class Geometry
                         return PointCapturer.result;
                     }),
                 new CommandBranch("angle")
+                    .SetDescription("calculate the angle of two points and a center [pointCapturer]")
                     .Execute(_ =>
                     {
                         Program.capturer.Start(3,

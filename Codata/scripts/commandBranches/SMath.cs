@@ -101,12 +101,14 @@ public static class SMath
         .AddBranches(
             new CommandBranch("add")
                 .ActiveParam()
+                .SetDescription("add input numbers")
                 .SetParamExecute(float.Parse, Add, i => new(i.ToString(), true)),
             new CommandBranch("subtract")
                 .ActiveParam()
                 .SetParamExecute(float.Parse, Subtract, f => new(f.ToString(), true)),
             new CommandBranch("gcd")
                 .ActiveParam()
+                .SetDescription("found the greatest common divisor of input numbers")
                 .Execute(args =>
                 {
                     int[] a = new int[args.args.Count];
@@ -119,6 +121,7 @@ public static class SMath
                 }),
             new CommandBranch("lcm")
                 .ActiveParam()
+                .SetDescription("found the least common multiple of input numbers")
                 .Execute(args =>
                 {
                     int[] a = new int[args.args.Count];

@@ -59,6 +59,7 @@ class Program
 	{
 		command = new CommandBranch("codata")
 				.AddBranch(new CommandBranch("author")
+					.SetDescription("some information of Codata's author")
 					.Execute(_ => new(Info.author,true))
 					.AddBranches(
 						new CommandBranch("bilibili")
@@ -90,19 +91,8 @@ class Program
 							)
 					)
 				)
-				.AddBranch(new CommandBranch("add")
-					.AddArguments(new("a"),new("b"))
-					.Execute(arg =>
-					{
-						Result r =  new Result(true);
-						if (!float.TryParse(arg.Get("a"), out float a)) return r;
-						if (float.TryParse(arg.Get("b"), out float b))
-						{
-							r.put = (a + b).ToString();
-						}
-						return r;
-					}))
 				.AddBranch(new CommandBranch("print")
+					.SetDescription("print the input, command for test")
 					.AddArgument(new CommandBranch.Argument("name")
 						.SetSuggestion(() => new List<string>
 						{
@@ -110,6 +100,7 @@ class Program
 						}))
 					.Execute(arg => new(arg.Get("name"), true)))
 				.AddBranch(new CommandBranch("open")
+					.SetDescription("open a file, input a path")
 					.AddArgument(new CommandBranch.Argument("path"))
 					.Execute(arg =>
 					{
@@ -124,6 +115,7 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("user")
+					.SetDescription("change the user")
 					.AddArgument(new CommandBranch.Argument("name"))
 					.Execute(arg =>
 					{
@@ -136,7 +128,9 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("setting")
+					.SetDescription("fix the setting information")
 					.AddBranch(new CommandBranch("recover")
+						.SetDescription("recover the setting, need confirm")
 						.Execute(arg =>
 						{
 							Tools.SetAfterConfirm(() =>
@@ -169,6 +163,7 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("confirm")
+					.SetDescription("confirm an operation")
 					.Execute(arg =>
 					{
 						afterConfirm?.Invoke();
@@ -177,6 +172,7 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("exit")
+					.SetDescription("exit to program")
 					.Execute(arg =>
 					{
 						if (info.confirmToExit)
