@@ -96,10 +96,7 @@ class Program
 				.AddBranch(new CommandBranch("print")
 					.SetDescription("print the input, command for test")
 					.AddArgument(new CommandBranch.Argument("name")
-						.SetSuggestion(() => new List<string>
-						{
-							"wind","searched", "helloworld", "ciao", "hi", "114514"
-						}))
+						.SetSuggestion(() => ["wind", "searched", "helloworld", "ciao", "hi", "114514"]))
 					.Execute(arg => new(arg.Get("name"), true)))
 				.AddBranch(new CommandBranch("open")
 					.SetDescription("open a file, input a path")
