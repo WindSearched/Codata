@@ -55,6 +55,13 @@ public static class Data
         sr.Close();
         return result;
     }
+
+    public static string[] ReadFileInLines(string path)
+    {
+        if (!FileExists(path))
+            return Array.Empty<string>();
+        return File.ReadAllLines(path);
+    }
     public static string PathCombine(string path1, string path2) => Path.Combine(path1, path2);
 
     public static FileInfo[] GetFilesInfo(string directoryPath)
