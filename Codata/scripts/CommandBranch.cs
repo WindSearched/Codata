@@ -336,27 +336,17 @@ namespace Codata.scripts
 
     }
 
-    public struct Result
+    public struct Result(Word put, bool success)
     {
-        public string put;
-        public bool success;
+        public Word put = put;
+        public bool success = success;
 
-        public Result(string put, bool success)
+        public Result() : this("default", false)
         {
-            this.put = put;
-            this.success = success;
         }
 
-        public Result()
+        public Result(bool success) : this(success ? "success" : "fail", success)
         {
-            put = "default";
-            success = false;
-        }
-
-        public Result(bool success)
-        {
-            this.success = success;
-            put = success ? "success" : "fail";
         }
 
         public static Result operator &(Result a, Result b)
@@ -377,5 +367,6 @@ namespace Codata.scripts
         }
 
         public static Result confirm = new("input confirm command to execute this command", true);
+        public static Word Word(string key, string @default) => new Word(@default, key, Program.langue);
     }
 }

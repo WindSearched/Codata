@@ -165,4 +165,5 @@ public class Word
 
     public static implicit operator string(Word word ) => word.Get();
     public static implicit operator Word(string str) => new(str);
+    public static Word word(string key, string @default) => new Word(@default, key, Program.langue);
 }

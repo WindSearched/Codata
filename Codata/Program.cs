@@ -59,7 +59,7 @@ class Program
 	static void RegisterCommands()
 	{
 		command = new CommandBranch("codata")
-				.Execute(_ => new Result("welcome to codata! ฅ՞Ⱉ՞ฅ",true))
+				.Execute(_ => new Result(Word.word("codata","welcome to codata! ฅ՞Ⱉ՞ฅ"),true))
 				.AddBranch(new CommandBranch("author")
 					.SetDescription("some information of Codata's author")
 					.Execute(_ => new(Info.author,true))
@@ -162,7 +162,7 @@ class Program
 					})
 				)
 				.AddBranch(new CommandBranch("confirm")
-					.SetDescription("confirm an operation")
+					.SetDescription(Word.word("confirm", "confirm an operation"))
 					.Execute(arg =>
 					{
 						afterConfirm?.Invoke();
