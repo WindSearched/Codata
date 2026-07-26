@@ -94,7 +94,7 @@ class Program
 					)
 				)
 				.AddBranch(new CommandBranch("print")
-					.SetDescription("print the input, command for test")
+					.SetDescription(Word.worddcr("print", "print the input, command for test"))
 					.AddArgument(new CommandBranch.Argument("name")
 						.SetSuggestion(() => ["wind", "searched", "helloworld", "ciao", "hi", "114514"]))
 					.Execute(arg => new(arg.Get("name"), true)))
