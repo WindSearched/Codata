@@ -161,6 +161,29 @@ public static class Tools
             return new(str.Substring(0, ind + 1), str.Substring(ind + 1));
         }
 
+        public static List<string> SplitAndRemoveRepeatedEmpties(string str, string cutter)
+        {
+            var s = str.Split(cutter);
+            var l = new List<string>();
+            bool isLeading = true;
+
+            foreach (var ind in s)
+            {
+                if (ind != "")
+                {
+                    isLeading = false;
+                    l.Add(ind);
+                }
+                else if (!isLeading && l[^1] != "")
+                {
+                    l.Add(ind);
+                }
+            }
+
+            if (l.Count == 0 && s.Length > 0) l.Add("");
+
+            return l;
+        }
         public static string[] SplitAndRemoveEmpties(string str, string cutter)
         {
             var s = str.Split(cutter);

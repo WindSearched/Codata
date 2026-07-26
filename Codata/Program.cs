@@ -1,191 +1,10 @@
 ﻿using System;
 using System.Reflection;
 using System.Windows.Forms;
+using Codata;
 using Codata.scripts;
 using Codata.scripts.classes;
 using Codata.scripts.commandBranches;
-
-class MainForm : Form
-{
-	public event Action OnEnterKeyDown;
-	public event Action<string> OnKeyDown;
-	public event Action OnTabDown;
-	public event Action OnDownDown;
-	public event Action OnRightDown;
-	public event Action OnLeftDown;
-	public event Action OnUpDown;
-	public event Action OnShiftDown;
-	public event Action OnShiftUp;
-	public bool shift;
-
-	public ListBox  ListBox;
-	public Cmdtext textBox;
-	public RichTextBox rtb;
-	public MainForm()
-	{
-		this.Text = "Codata";
-
-		this.ClientSize = new Size(800, 400);
-
-		Cmdtext textBox = this.textBox = new ();
-		//textBox.BorderStyle = BorderStyle.None;
-		//textBox.Multiline = false;
-		textBox.Font = new("Calibri", 11);
-		textBox.Size = new Size(645, 23);
-		//textBox.Width = 645;
-		textBox.PreviewKeyDown += (s, e) =>
-		{
-			if (e.KeyCode is Keys.Tab
-			    or Keys.Shift
-			    or Keys.Up
-			    or Keys.Down
-			    or Keys.Left
-			    or Keys.Right)
-			{
-				e.IsInputKey = true; //告诉系统这是输入键
-			}
-		};
-		textBox.KeyDown += (s, e) =>
-		{
-			if (e.KeyCode == Keys.Tab)
-			{
-				e.SuppressKeyPress = true; // 阻止跳转
-				OnTabDown?.Invoke();
-			}
-		};
-		//Panel box = new Panel();
-
-		//box.BorderStyle = BorderStyle.FixedSingle;
-		//box.Size = textBox.Size;
-		textBox.Location = new System.Drawing.Point(40, 347);
-
-		//textBox.Dock = DockStyle.Fill;
-
-		Controls.Add(textBox.hint);
-		//box.Controls.Add(textBox);
-		Controls.Add(textBox);
-
-		Button button = new Button();
-		button.Text = "enter";
-		Program.Log(button.Font.Name);
-		button.Location = new System.Drawing.Point(685, 347);
-		void click()
-		{
-			string cmd = textBox.Text.Trim(' ');
-
-			var result = Program.command.Command(cmd);
-
-			Log(cmd + "\n" + result.put);
-			textBox.Text = "";
-
-			Program.commandTube.Add(cmd);
-			Program.commandTube.RevertPointer();
-			Program.argstack.Clear();
-		}
-		Program.Log(button.Width);
-		button.Click += (s, e) => click();
-		OnEnterKeyDown += click;
-		textBox.KeyDown += Keydown;
-		textBox.KeyUp += Keyup;
-
-		Controls.Add(button);
-		this.KeyPreview = true;
-
-		//list
-		ListBox listBox = ListBox = new ListBox();
-		listBox.Location = new System.Drawing.Point(590, 40);
-		listBox.Width = 170;
-		listBox.Height = 267;  // 超过高度就会自动出现滚动条
-		this.Controls.Add(listBox);
-
-		RichTextBox rtb = this.rtb = new RichTextBox();
-		rtb.ReadOnly = true;
-		rtb.ScrollBars = RichTextBoxScrollBars.Vertical;
-		rtb.Location = new Point(40, 40);
-		rtb.Width = 510;
-		rtb.Height = 267;
-		Controls.Add(rtb);
-		rtb.Text += Program.PutUser();
-	}
-	private void Keydown(object sender, KeyEventArgs e)
-	{
-		OnKeyDown?.Invoke(e.KeyCode.ToString());
-
-		void notCHangeText()
-		{
-			e.Handled = true;
-			e.SuppressKeyPress = true;
-		}
-
-		switch (e.KeyCode)
-		{
-			case Keys.Enter:
-				OnEnterKeyDown?.Invoke();
-				break;
-			case Keys.Down:
-				notCHangeText();
-				OnDownDown?.Invoke();
-				break;
-			case Keys.Up:
-				notCHangeText();
-				OnUpDown?.Invoke();
-				break;
-			case Keys.Left:
-				notCHangeText();
-				OnLeftDown?.Invoke();
-				break;
-			case Keys.Right:
-				notCHangeText();
-				OnRightDown?.Invoke();
-				break;
-			case Keys.ShiftKey:
-				OnShiftDown?.Invoke();
-				break;
-		}
-	}
-
-	private void Keyup(object sender, KeyEventArgs e)
-	{
-		OnKeyDown?.Invoke(e.KeyCode.ToString());
-
-		switch (e.KeyCode)
-		{
-			case Keys.ShiftKey:
-				OnShiftUp?.Invoke();
-				break;
-		}
-	}
-
-	public void Log(string message, string user = "")
-	{
-		if (user == "")
-			user = GetUser;
-
-		RemovePreviewUser();
-
-		rtb.AppendText(user + ">" + message);
-
-		SetPreviewUser();
-
-		rtb.SelectionStart = rtb.TextLength;
-		rtb.SelectionLength = 0;
-		rtb.ScrollToCaret();
-	}
-
-	public string GetUser => Program.info.user;
-
-	public void SetPreviewUser()
-	{
-		rtb.Text += (rtb.Text.EndsWith('\n') ? "" : "\n") + GetUser + ">";
-	}
-	public void RemovePreviewUser()
-	{
-		string t = rtb.Text;
-		string u = GetUser + ">";
-		rtb.Text = t.Remove(t.Length - u.Length, u.Length);
-	}
-}
-
 
 class Program
 {
@@ -216,10 +35,11 @@ class Program
 		form.textBox.WhenTextChanged += (_,_) =>
 		{
 			var s = form.textBox.Text;
-			var l = Tools.Strings.SplitAndRemoveEmpties(s, " ");
+			var l = Tools.Strings.SplitAndRemoveRepeatedEmpties(s, " ");
 			//var l = s.Split(" ");
 
-			var v = command.GetSuggestions(l.ToList());
+			var v = command.GetSuggestions(l.ToList(), out var branch);
+			form.descriptionBox.Text = branch.description;
 			form.ListBox.DataSource = v.list;
 			form.textBox.SetSuggestion(v.tag);
 		};

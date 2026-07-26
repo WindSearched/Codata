@@ -188,7 +188,7 @@ namespace Codata.scripts
             suggestion.closure = func;
             return this;
         }
-        public (List<string> list, string tag) GetSuggestions(List<string> args)
+        public (List<string> list, string tag) GetSuggestions(List<string> args, out CommandBranch branch)
         {
             if (args.Count == 0)
             {
@@ -219,6 +219,7 @@ namespace Codata.scripts
             }
 
             var rl = list.Where(x => x.StartsWith(last)).ToList();
+            branch = node;
             return new(rl, GetSuggestionTag(node, i, last != "" && rl.Count == 0));
         }
 
