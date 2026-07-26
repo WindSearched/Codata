@@ -39,7 +39,8 @@ public class Langue
         dict ??= new();
         string[] lines = Data.ReadFileInLines(path);
 
-        string prefix = "", suffix = "";
+        string valprefix = "", valsuffix = "";
+        string keyprefix = "", keysuffix = "";
         bool notSelectedLangue = false;
 
         foreach (string line in lines)
@@ -52,11 +53,17 @@ public class Langue
                     case "l":
                         notSelectedLangue = language != args[1];
                         break;
-                    case "pf":
-                        prefix = args[1];
+                    case "vpf":
+                        valprefix = args[1];
                         break;
-                    case "sf":
-                        suffix = args[1];
+                    case "vsf":
+                        valsuffix = args[1];
+                        break;
+                    case "kpf":
+                        keyprefix = args[1];
+                        break;
+                    case "ksf":
+                        keysuffix = args[1];
                         break;
                 }
             }
@@ -64,7 +71,7 @@ public class Langue
             {
                 var args = line.Split(':');
                 if (args.Length != 2 || notSelectedLangue) continue;
-                dict.Set(args[0], prefix+language+suffix, args[1]);
+                dict.Set(keyprefix+args[0]+keysuffix, valprefix+language+valsuffix, args[1]);
             }
         }
         return dict;
@@ -75,7 +82,8 @@ public class Langue
         string[] lines = Data.ReadFileInLines(path);
 
         string language = "en";
-        string prefix = "", suffix = "";
+        string valprefix = "", valsuffix = "";
+        string keyprefix = "", keysuffix = "";
 
         foreach (string line in lines)
         {
@@ -87,11 +95,17 @@ public class Langue
                     case "l":
                         language = args[1];
                         break;
-                    case "pf":
-                        prefix = args[1];
+                    case "vpf":
+                        valprefix = args[1];
                         break;
-                    case "sf":
-                        suffix = args[1];
+                    case "vsf":
+                        valsuffix = args[1];
+                        break;
+                    case "kpf":
+                        keyprefix = args[1];
+                        break;
+                    case "ksf":
+                        keysuffix = args[1];
                         break;
                 }
             }
@@ -99,7 +113,7 @@ public class Langue
             {
                 var args = line.Split(':');
                 if (args.Length != 2) continue;
-                dict.Set(args[0], prefix+language+suffix, args[1]);
+                dict.Set(keyprefix+args[0]+keysuffix, valprefix+language+valsuffix, args[1]);
             }
         }
         return dict;
