@@ -39,7 +39,8 @@ class Program
 			//var l = s.Split(" ");
 
 			var v = command.GetSuggestions(l.ToList(), out var branch);
-			form.descriptionBox.Text = branch.description;
+			if(info.viewDescription)
+				form.descriptionBox.Text = branch.description;
 			form.ListBox.DataSource = v.list;
 			form.textBox.SetSuggestion(v.tag);
 		};

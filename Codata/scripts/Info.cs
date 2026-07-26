@@ -14,6 +14,7 @@ public class Info
 	public string user = "Codata";
     public bool debug = false;
     public bool confirmToExit = false;
+    public bool viewDescription = true;
 
     [JsonIgnore]
     public int screenWidth = Screen.PrimaryScreen.Bounds.Width;
