@@ -97,7 +97,7 @@ public static class SMath
     public static double Sqrt(float a) => Math.Sqrt(a);
 
     public static CommandBranch math = new CommandBranch("math")
-        .SetDescription("math commands")
+        .SetDescription(CommandBranch.Word("math", "math commands"))
         .AddBranches(
             new CommandBranch("add")
                 .ActiveParam()

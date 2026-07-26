@@ -15,6 +15,7 @@ public class Info
     public bool debug = false;
     public bool confirmToExit = false;
     public bool viewDescription = true;
+    public string language = "en";
 
     [JsonIgnore]
     public int screenWidth = Screen.PrimaryScreen.Bounds.Width;

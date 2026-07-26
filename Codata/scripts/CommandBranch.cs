@@ -16,7 +16,7 @@ namespace Codata.scripts
 
         public List<CommandBranch> branches = new();
         public List<Argument> arguments = new();
-        public string description;
+        public Word description = new();
 
         /// <summary>
         /// if it is true in parse time detect if the head splits is branches,
@@ -265,7 +265,7 @@ namespace Codata.scripts
             return this;
         }
 
-        public CommandBranch SetDescription(string description)
+        public CommandBranch SetDescription(Word description)
         {
             this.description = description;
             return this;
@@ -332,6 +332,8 @@ namespace Codata.scripts
         }
 
         public override string ToString() => name;
+	    public static Word Word(string key, string @default) => new Word(@default, key, Program.langue);
+
     }
 
     public struct Result

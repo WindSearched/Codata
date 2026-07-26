@@ -23,12 +23,15 @@ class Program
 	{
 		capturer = new();
 
-		RegisterCommands();
 		Data.Init();
+		info = Info.ReadJson(Data.infoPath);
+		Langue.Init(out langue);
+		RegisterCommands();
 		Commands.Init();
 		Lua.Init();
-		info = Info.ReadJson(Data.infoPath);
 		afterConfirm = new(Lua.script);
+
+		Log(langue.ToString());
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);

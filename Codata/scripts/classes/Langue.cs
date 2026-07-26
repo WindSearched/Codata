@@ -6,6 +6,11 @@ public class Langue
     public SDict<string, string> dict = new();
     public string language = "en";
 
+    public Langue(string language, string[] paths)
+    {
+        this.language = language;
+        dict = Read(language, paths);
+    }
     public Langue(string language, string path)
     {
         this.language = language;
@@ -99,4 +104,65 @@ public class Langue
         }
         return dict;
     }
+
+
+
+    public static void Init(out Langue langue)
+    {
+        string path = Path.Combine(Data.filePath, "langue");
+        string[] readPaths = [];
+        if (Data.DirectoryExists(path))
+        {
+            DirectoryInfo di = new DirectoryInfo(path);
+            readPaths = di.GetFiles("*.lgu", SearchOption.AllDirectories).Select(x => x.FullName).ToArray();
+        }
+        else
+        {
+            Data.CreateDirectory(path);
+        }
+
+        langue = new Langue(Program.info.language, readPaths);
+    }
+}
+
+public class Word
+{
+    public Langue langue;
+    public string key;
+    public string default_ = "";
+    public Word(string key, Langue langue)
+    {
+        this.langue = langue;
+        this.key = key;
+    }
+
+    public Word(string @default)
+    {
+        default_ = @default;
+    }
+
+    public Word(string @default, string key,  Langue langue)
+    {
+        this.langue = langue;
+        this.default_ = @default;
+        this.key = key;
+    }
+
+    public Word()
+    {
+
+    }
+
+    public string Get()
+    {
+        if (langue == null)
+        {
+            return default_;
+        }
+        string r = langue.Get(key);
+        return string.IsNullOrEmpty(r) ? default_ : r;
+    }
+
+    public static implicit operator string(Word word ) => word.Get();
+    public static implicit operator Word(string str) => new(str);
 }

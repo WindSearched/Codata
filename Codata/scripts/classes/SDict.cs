@@ -149,11 +149,13 @@ public class SDict<TKey, TVal>
                 sb.Append("},");
             }
 
-            sb.Length--;//remove comma
+            if (sb[^1] == ',')
+                sb.Length--;//remove comma
             sb.Append("},");
         }
 
-        sb.Length--;//remove comma
+        if (sb[^1] == ',')
+            sb.Length--;//remove comma
         sb.Append("}");
         return sb.ToString();
     }
