@@ -7,6 +7,8 @@ class MainForm : Form
 	public event Action OnEnterKeyDown;
 	public event Action<string> OnKeyDown;
 	public event Action OnTabDown;
+	public event Action OnCtrlDown;
+	public event Action OnCtrlUp;
 	public event Action OnDownDown;
 	public event Action OnRightDown;
 	public event Action OnLeftDown;
@@ -14,6 +16,7 @@ class MainForm : Form
 	public event Action OnShiftDown;
 	public event Action OnShiftUp;
 	public bool shift;
+	public bool ctrl;
 
 	public ListBox  ListBox;
 	public Cmdtext textBox;
@@ -31,6 +34,7 @@ class MainForm : Form
 		textBox.PreviewKeyDown += (s, e) =>
 		{
 			if (e.KeyCode is Keys.Tab
+			    or Keys.Control
 			    or Keys.Shift
 			    or Keys.Up
 			    or Keys.Down
@@ -46,6 +50,10 @@ class MainForm : Form
 			{
 				e.SuppressKeyPress = true; // 阻止跳转
 				OnTabDown?.Invoke();
+			}
+			else if(e.KeyCode == Keys.Control)
+			{
+				OnCtrlDown?.Invoke();
 			}
 		};
 		textBox.Location = new System.Drawing.Point(40, 347);
@@ -198,4 +206,6 @@ class MainForm : Form
 	}
 
 	public Point cursorLocation => PointToClient(Cursor.Position);
+
+	public void SetCommandLine(string command) => textBox.Text = command;
 }

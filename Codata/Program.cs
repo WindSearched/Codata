@@ -1,7 +1,8 @@
-﻿using Codata;
-using Codata.scripts;
+﻿using Codata.scripts;
 using Codata.scripts.classes;
 using Codata.scripts.commandBranches;
+
+namespace Codata;
 
 class Program
 {
@@ -14,6 +15,7 @@ class Program
 	public static PointCapturer capturer;
 	public static Stack<string> argstack = new();
 	public static Langue langue;
+	public static LineCommand lineCommand;
 
 	[STAThread]
 	static void Main()
@@ -135,7 +137,7 @@ class Program
 							Tools.SetAfterConfirm(() =>
 							{
 								Program.Log("test");
-							 	info = new();
+								info = new();
 							});
 							return new Result("input confirm command to execute this command",true);
 						})
@@ -254,6 +256,19 @@ class Program
 					form.textBox.Text = result;
 				}
 			}
+			else if (form.ctrl)//show command line
+			{
+				int l = Tools.KeyCtrl.GetLineOfInsertPosition();
+				l = lineCommand.LineSearch(l, true, false);
+				if (l != 0)
+				{
+					Tools.KeyCtrl.ShowCommandLine(l);
+				}
+				else
+				{
+					Tools.DebugLog("do not find line command");
+				}
+			}
 			else
 			{
 				if (max >= 0)
@@ -281,6 +296,19 @@ class Program
 					form.textBox.Text = result;
 				}
 			}
+			else if (form.ctrl)//show command line
+			{
+				int l = Tools.KeyCtrl.GetLineOfInsertPosition();
+				l = lineCommand.LineSearchReverse(l, true, false);
+				if (l != 0)
+				{
+					Tools.KeyCtrl.ShowCommandLine(l);
+				}
+				else
+				{
+					Tools.DebugLog("do not find line command");
+				}
+			}
 			else
 			{
 				if (max >= 0)
@@ -305,6 +333,26 @@ class Program
 		};
 		form.OnShiftDown += () => form.shift = true;
 		form.OnShiftUp += () => form.shift = false;
+		form.OnCtrlDown += () => form.ctrl = true;
+		form.OnCtrlDown += () =>
+		{
+			if (Tools.KeyCtrl.SearchLineInForm(lineCommand, out int l))
+			{
+				Tools.KeyCtrl.ShowCommandLine(l);
+			}
+		};
+		form.OnCtrlUp += () => form.ctrl = false;
+		form.OnEnterKeyDown += () =>
+		{
+			if (form.ctrl)
+			{
+				int l = Tools.KeyCtrl.GetLineOfInsertPosition();
+				if (l != 0 && lineCommand.TryGet(l, out var s))
+				{
+					form.SetCommandLine(s);
+				}
+			}
+		};
 	}
 
 	public static void Log(object message)

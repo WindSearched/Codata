@@ -190,6 +190,27 @@ public static class Tools
             return s.Where(x => x!= "").ToArray();
         }
     }
+    public static class KeyCtrl
+    {
+        public static int GetLineOfInsertPosition() => Program.form.rtb.GetLineFromCharIndex(Program.form.rtb.SelectionStart);
+        public static bool SearchLineInForm(LineCommand line, out int commandLine)
+        {
+            var l = GetLineOfInsertPosition();
+            bool b = line.CanUse(l);
+            commandLine = b ? l : 0;
+            return b;
+        }
+
+        public static void ShowCommandLine(int line)
+        {
+            var f = Program.form.rtb;
+            if(f.Lines.Length == 0 || line < 0 || line > f.Lines.Length) return;
+            int start = f.GetFirstCharIndexFromLine(line);
+            int length = f.Lines[line].Length;
+            f.Select(start, length);
+        }
+
+    }
 
     /// <summary>
     /// log only the debug setting is active
