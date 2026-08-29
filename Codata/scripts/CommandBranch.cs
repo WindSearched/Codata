@@ -202,25 +202,47 @@ namespace Codata.scripts
 
             var list = new List<string>();
 
-            if (i == 0)
+            if (node.arguments.Count > 0 && i < node.arguments.Count && node.arguments[i].argument.StartsWith("path"))
             {
-                //add branches
-                list.AddRange(node.branches.SelectMany(v => v.abbreviation == null
-                    ? new[] { v.name }
-                    : new[] { v.abbreviation , v.name }));
+                var li = last.LastIndexOf('\\') + 1;
+                if (last.Contains('\\'))
+                {
+                    var p = last.Substring(0, li);
+                    list.AddRange(Data.GetDirectoriesInfo(p).Select(x => x.Name).ToList());
+                }
+                else
+                {
+                    list.AddRange(Data.GetDrives().Select(x => x.Name).ToList());
+                }
+
+                var pathLast = last.Substring(li);
+                list = list.Where(x => x.StartsWith(pathLast)).ToList();
+            }
+            else
+            {
+                if (i == 0)
+                {
+                    //add branches
+                    list.AddRange(node.branches.SelectMany(v => v.abbreviation == null
+                        ? new[] { v.name }
+                        : new[] { v.abbreviation , v.name }));
+                }
+
+                if (node.arguments.Count > i &&
+                    node.arguments[i].suggestion != null)
+                {
+                    var l = node.arguments[i].suggestion.Invoke();
+                    if(l != null)
+                        list.AddRange(l);
+                }
+
+                list = list.Where(x => x.StartsWith(last)).ToList();// final process show just the text that start with 'last'
             }
 
-            if (node.arguments.Count > i &&
-                node.arguments[i].suggestion != null)
-            {
-                var l = node.arguments[i].suggestion.Invoke();
-                if(l != null)
-                    list.AddRange(l);
-            }
-
-            var rl = list.Where(x => x.StartsWith(last)).ToList();
             branch = node;
-            return new(rl, GetSuggestionTag(node, i, last != "" && rl.Count == 0));
+            var tag = GetSuggestionTag(node, i, last != "" && list.Count == 0);//arg tag
+
+            return new(list, tag);
         }
 
         public string GetSuggestionTag(CommandBranch node,int count, bool brancheNotFound)
@@ -246,7 +268,7 @@ namespace Codata.scripts
             }
 
             if (node.arguments.Count > 0 && count < node.arguments.Count)
-            {
+            {//argument
                 add($"<{node.arguments[count].argument}>");
             }
 

@@ -42,6 +42,8 @@ class Program
 			var l = Tools.Strings.SplitAndRemoveRepeatedEmpties(s, " ");
 
 			var v = command.GetSuggestions(l.ToList(), out var branch);
+
+
 			if(info.viewDescription)
 				form.descriptionBox.Text = branch.description;
 			form.ListBox.DataSource = v.list;
@@ -234,8 +236,15 @@ class Program
 			var c = form.textBox.Text;
 			int index = c.LastIndexOf(' ');
 
-			c = index != -1 ? c.Substring(0, index+1) : "";
-			c += s + ' ';
+			if (c.EndsWith('\\'))
+			{
+				c += s + '\\';
+			}
+			else
+			{
+				c = index != -1 ? c.Substring(0, index+1) : "";
+				c += s.EndsWith('\\') ? s : s + ' ';
+			}
 
 			var t = form.textBox;
 			t.canChange = false;

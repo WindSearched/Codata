@@ -135,6 +135,8 @@ public static class Data
         content = default;
         return false;
     }
+
+    public static DriveInfo[] GetDrives() => DriveInfo.GetDrives();
 }
 public class DataLua
 {
