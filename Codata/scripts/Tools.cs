@@ -227,7 +227,7 @@ public static class Tools
         /// </summary>
         /// <param name="lcmd"></param>
         /// <param name="blocks"></param>
-        public static void Register(LineCommand lcmd, List<(int line, string cmd)> blocks)
+        public static void Register(LineCommand lcmd, List<CommandLine> blocks)
         {
             if(blocks is null) return;
             var f = Program.form.rtb;

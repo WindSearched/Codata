@@ -69,6 +69,11 @@ public static class Data
         var d = new DirectoryInfo(directoryPath);
         return d.GetFiles();
     }
+    public static DirectoryInfo[] GetDirectoriesInfo(string directoryPath)
+    {
+        var d = new DirectoryInfo(directoryPath);
+        return d.GetDirectories();
+    }
 
     public static void OpenForm(string path)
     {

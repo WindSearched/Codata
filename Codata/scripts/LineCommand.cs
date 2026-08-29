@@ -180,3 +180,15 @@ public class LineCommand
         public override string ToString() => Get();
     }
 }
+
+public struct CommandLine
+{
+    public string cmd;
+    public int line;
+
+    public CommandLine(int  line, string cmd)
+    {
+        this.line = line;
+        this.cmd = cmd;
+    }
+}

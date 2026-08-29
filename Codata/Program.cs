@@ -219,6 +219,7 @@ class Program
 				.AddBranch(Test.test)
 			;
 		command.AddBranch(command);
+		command.AddBranch(FileViewer.branch);
 
 	}
 

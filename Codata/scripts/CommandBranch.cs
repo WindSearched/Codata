@@ -340,7 +340,7 @@ namespace Codata.scripts
     {
         public Word put = put;
         public bool success = success;
-        public List<(int line, string cmd)> linecmds;
+        public List<CommandLine> linecmds;
 
         public Result() : this("default", false)
         {
@@ -350,7 +350,7 @@ namespace Codata.scripts
         {
         }
 
-        public Result(Word put, bool success, List<(int line, string cmd)> linecmd) : this(put, success)
+        public Result(Word put, bool success, List<CommandLine> linecmd) : this(put, success)
         {
             this.put = put;
             linecmds = linecmd;
