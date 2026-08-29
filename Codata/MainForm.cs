@@ -1,4 +1,5 @@
-﻿using Codata.scripts.classes;
+﻿using Codata.scripts;
+using Codata.scripts.classes;
 
 namespace Codata;
 
@@ -73,24 +74,11 @@ class MainForm : Form
 		button.Text = "enter";
 		Program.Log(button.Font.Name);
 		button.Location = new System.Drawing.Point(685, 347);
-		void click()
-		{
-			string cmd = textBox.Text.Trim(' ');
-
-			var result = Program.command.Command(cmd);
-
-			Log(cmd + "\n" + result.put);
-			textBox.Text = "";
-
-			Program.commandTube.Add(cmd);
-			Program.commandTube.RevertPointer();
-			Program.argstack.Clear();
-		}
 		Program.Log(button.Width);
-		button.Click += (s, e) => click();
-		OnEnterKeyDown += click;
-		textBox.KeyDown += Keydown;
-		textBox.KeyUp += Keyup;
+		button.Click += (s, e) => Execute();
+		OnEnterKeyDown += Execute;
+		KeyDown += Keydown;
+		KeyUp += Keyup;
 
 		Controls.Add(button);
 		this.KeyPreview = true;
@@ -110,6 +98,22 @@ class MainForm : Form
 		rtb.Height = 267;
 		Controls.Add(rtb);
 		rtb.Text += Program.PutUser();
+	}
+
+	public void Execute()
+	{
+		string cmd = textBox.Text.Trim(' ');
+
+		var result = Program.command.Command(cmd);
+
+		Tools.KeyCtrl.Register(Program.lineCommand, result.linecmds);
+
+		Log(cmd + "\n" + result.put);
+		textBox.Text = "";
+
+		Program.commandTube.Add(cmd);
+		Program.commandTube.RevertPointer();
+		Program.argstack.Clear();
 	}
 	private void Keydown(object sender, KeyEventArgs e)
 	{
@@ -145,6 +149,9 @@ class MainForm : Form
 			case Keys.ShiftKey:
 				OnShiftDown?.Invoke();
 				break;
+			case Keys.ControlKey:
+				OnCtrlDown?.Invoke();
+				break;
 		}
 	}
 
@@ -157,9 +164,17 @@ class MainForm : Form
 			case Keys.ShiftKey:
 				OnShiftUp?.Invoke();
 				break;
+			case Keys.ControlKey:
+				OnCtrlUp?.Invoke();
+				break;
 		}
 	}
 
+	/// <summary>
+	/// log in output form
+	/// </summary>
+	/// <param name="message"></param>
+	/// <param name="user"></param>
 	public void Log(string message, string user = "")
 	{
 		if (user == "")
@@ -208,4 +223,5 @@ class MainForm : Form
 	public Point cursorLocation => PointToClient(Cursor.Position);
 
 	public void SetCommandLine(string command) => textBox.Text = command;
+	public bool CompareCommandLine(string command) => textBox.Text.Equals(command);
 }

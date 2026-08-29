@@ -29,6 +29,7 @@ class Program
 		Commands.Init();
 		Lua.Init();
 		afterConfirm = new(Lua.script);
+		lineCommand = new LineCommand();
 
 		Log(langue.ToString());
 
@@ -200,7 +201,7 @@ class Program
 				.AddBranch(new CommandBranch("capture")
 					.Execute(arg =>
 					{
-						Program.capturer.Start(3,
+						capturer.Start(3,
 							ps =>
 							{
 								string s = "";
@@ -215,6 +216,7 @@ class Program
 						return new Result(true);
 					})
 				)
+				.AddBranch(Test.test)
 			;
 		command.AddBranch(command);
 
@@ -338,7 +340,15 @@ class Program
 		{
 			if (Tools.KeyCtrl.SearchLineInForm(lineCommand, out int l))
 			{
-				Tools.KeyCtrl.ShowCommandLine(l);
+				if (!Tools.KeyCtrl.TryShowLine(l))
+				{
+					var c = lineCommand.Get(l);
+					if (form.CompareCommandLine(c))
+						form.Execute();
+					else
+						form.SetCommandLine(c);
+
+				}
 			}
 		};
 		form.OnCtrlUp += () => form.ctrl = false;

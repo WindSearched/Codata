@@ -210,6 +210,35 @@ public static class Tools
             f.Select(start, length);
         }
 
+        /// <returns>if the line is selected return false</returns>
+        public static bool TryShowLine(int line)
+        {
+            var f =  Program.form.rtb;
+            if(f.Lines.Length == 0 || line < 0 || line > f.Lines.Length) return false;
+            int start = f.GetFirstCharIndexFromLine(line);
+            int length = f.Lines[line].Length;
+
+            if (start == f.SelectionStart && length == f.SelectionLength) return false;
+            f.Select(start, length);
+            return true;
+        }
+        /// <summary>
+        /// register to line command with absolute index
+        /// </summary>
+        /// <param name="lcmd"></param>
+        /// <param name="blocks"></param>
+        public static void Register(LineCommand lcmd, List<(int line, string cmd)> blocks)
+        {
+            if(blocks is null) return;
+            var f = Program.form.rtb;
+            var l = f.Lines.Length - 1;
+            blocks.ForEach(x => x.line += l);
+
+            for (int i = 0; i < blocks.Count; i++)
+            {
+                lcmd.Reg(blocks[i].line + l , blocks[i].cmd);
+            }
+        }
     }
 
     /// <summary>

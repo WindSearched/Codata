@@ -17,8 +17,15 @@ public class LineCommand
             commands.Add(lineIndex, command);
         }
     }
-
     public void Reg(int lineIndex ,Builder builder, bool overwrite) => Reg(lineIndex, builder.ToString(), overwrite);
+
+    public void Reg(List<(int line, string cmd)> blocks, bool overwrite = true)
+    {
+        foreach (var b in blocks)
+        {
+            Reg(b.line, b.cmd, overwrite);
+        }
+    }
     public string Get(int lineIndex, bool skipCanUse = false)
     {
         if (skipCanUse)
@@ -64,7 +71,8 @@ public class LineCommand
     public bool CanUse(int lineIndex)
     {
         if(!commands.TryGetValue(lineIndex, out var c)) return false;
-        return c.Split('|').SkipLast(1).Any(x => !x.StartsWith('n'));//if prefix start with n the command is not usable
+        var l = c.Split('|').SkipLast(1).ToList();
+        return l.Count == 0 || l.Any(x => !x.StartsWith('n'));//if prefix start with n the command is not usable
     }
     public bool Contain(int lineIndex) => commands.ContainsKey(lineIndex);
 

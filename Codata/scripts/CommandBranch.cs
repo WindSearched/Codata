@@ -340,6 +340,7 @@ namespace Codata.scripts
     {
         public Word put = put;
         public bool success = success;
+        public List<(int line, string cmd)> linecmds;
 
         public Result() : this("default", false)
         {
@@ -347,6 +348,13 @@ namespace Codata.scripts
 
         public Result(bool success) : this(success ? "success" : "fail", success)
         {
+        }
+
+        public Result(Word put, bool success, List<(int line, string cmd)> linecmd) : this(put, success)
+        {
+            this.put = put;
+            linecmds = linecmd;
+            this.success = success;
         }
 
         public static Result operator &(Result a, Result b)
@@ -362,6 +370,7 @@ namespace Codata.scripts
             else
             {
                 r.put = a.put + "\n" + b.put;
+                r.linecmds = a.linecmds.Concat(b.linecmds).ToList();
             }
             return r;
         }
