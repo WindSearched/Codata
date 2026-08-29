@@ -52,10 +52,6 @@ class MainForm : Form
 				e.SuppressKeyPress = true; // 阻止跳转
 				OnTabDown?.Invoke();
 			}
-			else if(e.KeyCode == Keys.Control)
-			{
-				OnCtrlDown?.Invoke();
-			}
 		};
 		textBox.Location = new System.Drawing.Point(40, 347);
 
@@ -131,19 +127,23 @@ class MainForm : Form
 				OnEnterKeyDown?.Invoke();
 				break;
 			case Keys.Down:
-				notCHangeText();
+				if(shift || ctrl)
+					notCHangeText();
 				OnDownDown?.Invoke();
 				break;
 			case Keys.Up:
-				notCHangeText();
+				if(shift || ctrl)
+					notCHangeText();
 				OnUpDown?.Invoke();
 				break;
 			case Keys.Left:
-				notCHangeText();
+				if(shift || ctrl)
+					notCHangeText();
 				OnLeftDown?.Invoke();
 				break;
 			case Keys.Right:
-				notCHangeText();
+				if(shift || ctrl)
+					notCHangeText();
 				OnRightDown?.Invoke();
 				break;
 			case Keys.ShiftKey:
