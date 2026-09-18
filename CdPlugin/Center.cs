@@ -4,9 +4,12 @@ using MoonSharp.Interpreter;
 
 namespace CdPlugin;
 
-public class Center
+public static class Center
 {
     public static Script luascript;
     public static Langue langue;
     public static Info info;
+
+    public static Action<string> printAction;
+    public static void Print(string message) => printAction?.Invoke(message);
 }

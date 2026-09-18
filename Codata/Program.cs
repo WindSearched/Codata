@@ -30,6 +30,7 @@ class Program
 		afterConfirm = new(Lua.script);
 		lineCommand = new LineCommand();
 		PluginRegister.Registering(Data.PathCombine(Data.filePath, "mods"));
+		Center.printAction = s => form.Log(s);
 
 		Log(Center.langue.ToString());
 
