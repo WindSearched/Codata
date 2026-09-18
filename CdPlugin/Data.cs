@@ -13,8 +13,6 @@ public static class Data
 
     public static void Init()
     {
-        Program.Log(defaultFilePath);
-
         if (FileExists(defaultFilePath + "path.txt"))
         {
             filePath = ReadFile(defaultFilePath + "path.txt");

@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Reflection;
+using CdPlugin;
+using Codata.scripts.classes;
 using MoonSharp.Interpreter;
 
 namespace Codata.scripts;
 
 public static class Tools
 {
-    public static Info info => Program.info;
+    public static Info info => Center.info;
     public static class ReflectionHelper
     {
         public static void SetFieldFromString(object obj, string fieldName, string value)

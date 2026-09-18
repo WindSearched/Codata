@@ -1,4 +1,6 @@
-﻿namespace Codata.scripts.commandBranches;
+﻿using CdPlugin;
+
+namespace Codata.scripts.commandBranches;
 
 public static class Geometry
 {

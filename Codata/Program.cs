@@ -1,4 +1,5 @@
-﻿using Codata.scripts;
+﻿using CdPlugin;
+using Codata.scripts;
 using Codata.scripts.classes;
 using Codata.scripts.commandBranches;
 
@@ -9,12 +10,10 @@ class Program
 	public static CommandBranch command;
 	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
-	public static Info info;
 	public static CdAction afterConfirm;
 	public static event Action OnProgramClose;
 	public static PointCapturer capturer;
 	public static Stack<string> argstack = new();
-	public static Langue langue;
 	public static LineCommand lineCommand;
 
 	[STAThread]
@@ -23,15 +22,16 @@ class Program
 		capturer = new();
 
 		Data.Init();
-		info = Info.ReadJson(Data.infoPath);
-		Langue.Init(out langue);
+		Center.info = Info.ReadJson(Data.infoPath);
+		Langue.Init(out Center.langue);
 		RegisterCommands();
 		Commands.Init();
 		Lua.Init();
 		afterConfirm = new(Lua.script);
 		lineCommand = new LineCommand();
+		PluginRegister.Registering(Data.PathCombine(Data.filePath, "mods"));
 
-		Log(langue.ToString());
+		Log(Center.langue.ToString());
 
 		Application.EnableVisualStyles();
 		Application.SetCompatibleTextRenderingDefault(false);
@@ -44,7 +44,7 @@ class Program
 			var v = command.GetSuggestions(l.ToList(), out var branch);
 
 
-			if(info.viewDescription)
+			if(Center.info.viewDescription)
 				form.descriptionBox.Text = branch.description;
 			form.ListBox.DataSource = v.list;
 			form.textBox.SetSuggestion(v.tag);
@@ -58,7 +58,7 @@ class Program
 
 		//when program close
 		OnProgramClose?.Invoke();
-		Info.WriteJson(Data.infoPath, info);
+		Info.WriteJson(Data.infoPath, Center.info);
 	}
 
 	static void RegisterCommands()
@@ -126,7 +126,7 @@ class Program
 						string n = arg.Get("name");
 						if (n == "")
 							return new("changes name is null", false);
-						info.user = n;
+						Center.info.user = n;
 						return new("change succeed",true);
 
 					})
@@ -140,13 +140,13 @@ class Program
 							Tools.SetAfterConfirm(() =>
 							{
 								Program.Log("test");
-								info = new();
+								Center.info = new();
 							});
 							return new Result("input confirm command to execute this command",true);
 						})
 					)
 					.AddArgument(new CommandBranch.Argument("name")
-						.SetSuggestion(() => Tools.ReflectionHelper.GetFieldsString(info))
+						.SetSuggestion(() => Tools.ReflectionHelper.GetFieldsString(Center.info))
 					)
 					.AddArgument(new CommandBranch.Argument("value"))
 					.Execute(arg =>
@@ -159,7 +159,7 @@ class Program
 						{
 							return new("changes value is null", false);
 						}
-						Tools.ReflectionHelper.SetFieldFromString(info, name, value);
+						Tools.ReflectionHelper.SetFieldFromString(Center.info, name, value);
 
 						Tools.DebugLog(value);
 
@@ -179,7 +179,7 @@ class Program
 					.SetDescription("exit to program")
 					.Execute(arg =>
 					{
-						if (info.confirmToExit)
+						if (Center.info.confirmToExit)
 						{
 							Tools.SetAfterConfirm(() => form.Close());
 							return Result.confirm;
@@ -380,5 +380,5 @@ class Program
 		Console.WriteLine(message);
 	}
 
-	public static string PutUser() => info.user + ">";
+	public static string PutUser() => Center.info.user + ">";
 }

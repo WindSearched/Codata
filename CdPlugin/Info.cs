@@ -17,10 +17,10 @@ public class Info
     public bool viewDescription = true;
     public string language = "en";
 
-    [JsonIgnore]
-    public int screenWidth = Screen.PrimaryScreen.Bounds.Width;
-    [JsonIgnore]
-    public int screenHeight = Screen.PrimaryScreen.Bounds.Height;
+    // [JsonIgnore]
+    // public int screenWidth = Screen.PrimaryScreen.Bounds.Width;
+    // [JsonIgnore]
+    // public int screenHeight = Screen.PrimaryScreen.Bounds.Height;
 
     public static Info ReadJson(string path)
     {

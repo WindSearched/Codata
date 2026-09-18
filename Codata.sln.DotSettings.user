@@ -1,4 +1,5 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:Boolean x:Key="/Default/AddReferences/RecentPaths/=D_003A_005CcodeProject_005CCodata_005CCodata_005Cbin_005CRelease_005Cnet9_002E0_002Dwindows_005CCodata_002Edll/@EntryIndexedValue">True</s:Boolean>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AApplication_002Ecs_002Fl_003AC_0021_003FUsers_003Fren_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F7e319b3d1a4e4f72ad057f3f5c735d01d22928_003Fa5_003F91a56870_003FApplication_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AApplication_002Ecs_002Fl_003AC_0021_003FUsers_003Fren_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FDecompilerCache_003Fdecompiler_003F7e319b3d1a4e4f72ad057f3f5c735d01d22928_003Fa5_003F91a56870_003FApplication_002Ecs_002Fz_003A2_002D1/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AApplication_002Ecs_002Fl_003AC_0021_003FUsers_003Fren_003FAppData_003FRoaming_003FJetBrains_003FRider2025_002E3_003Fresharper_002Dhost_003FSourcesCache_003F7db74c735d19e80368b8246fd731b34834fef8fed4fb1dbae559e54d6b6ea_003FApplication_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
@@ -27,4 +28,5 @@
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/CheckedGroups/=Codata_002Fresources_002Fthumbtack/@EntryIndexRemoved">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/Initialized/@EntryValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/ResxEditorPersonal/ShowOnlyStringResources/@EntryValue">True</s:Boolean>
+	
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=bilibili/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

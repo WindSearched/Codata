@@ -1,4 +1,5 @@
-﻿using Codata.scripts;
+﻿using CdPlugin;
+using Codata.scripts;
 using Codata.scripts.classes;
 
 namespace Codata;
@@ -191,7 +192,7 @@ class MainForm : Form
 		rtb.ScrollToCaret();
 	}
 
-	public string GetUser => Program.info.user;
+	public string GetUser => Center.info.user;
 
 	public void SetPreviewUser()
 	{

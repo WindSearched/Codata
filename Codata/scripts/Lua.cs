@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using CdPlugin;
 using Codata.scripts.commandBranches;
 using Microsoft.VisualBasic.Logging;
 
@@ -7,7 +8,11 @@ using MoonSharp.Interpreter;
 
 public static class Lua
 {
-    public static Script script = new();
+    public static Script script
+    {
+        get => Center.luascript;
+        set => Center.luascript = value;
+    }
 
     public static void Load(string path)
     {
@@ -24,6 +29,7 @@ public static class Lua
 
     public static void Init()
     {
+        script =  new Script();
         Register();
 
         string path = Data.PathCombine(Data.filePath, "mods");

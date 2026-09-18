@@ -2,9 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Codata.scripts;
 using Codata.scripts.classes;
 
-namespace Codata.scripts
+namespace CdPlugin
 {
     public class CommandBranch
     {
@@ -33,8 +34,8 @@ namespace Codata.scripts
 
         public CommandBranch(string name)
         {
-            execute = new(Lua.script);
-            suggestion = new(Lua.script);
+            execute = new(Center.luascript);
+            suggestion = new(Center.luascript);
             this.name = name;
         }
 
@@ -125,7 +126,7 @@ namespace Codata.scripts
         // =========================
         public CommandBranch Parse(string path, out CommandArg args)
         {
-            var split = Commands.ParseArgs(path);
+            var split = ParseArgs(path);
             return Parse(split, out args);
         }
 
@@ -303,7 +304,7 @@ namespace Codata.scripts
 
             public Argument(string argument)
             {
-                suggestion = new(Lua.script);
+                suggestion = new(Center.luascript);
                 this.argument = argument;
             }
 
@@ -354,8 +355,43 @@ namespace Codata.scripts
         }
 
         public override string ToString() => name;
-	    public static Word Word(string key, string @default) => new Word(@default, key, Program.langue);
+	    public static Word Word(string key, string @default) => new Word(@default, key, Center.langue);
 
+        public static List<string> ParseArgs(string input)
+        {
+            var result = new List<string>();
+            var current = "";
+            bool inQuotes = false;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                char c = input[i];
+
+                if (c == '"')
+                {
+                    inQuotes = !inQuotes;
+                    continue;
+                }
+
+                if (c == ' ' && !inQuotes)
+                {
+                    if (current.Length > 0)
+                    {
+                        result.Add(current);
+                        current = "";
+                    }
+                }
+                else
+                {
+                    current += c;
+                }
+            }
+
+            if (current.Length > 0)
+                result.Add(current);
+
+            return result;
+        }
     }
 
     public struct Result(Word put, bool success)
@@ -398,6 +434,6 @@ namespace Codata.scripts
         }
 
         public static Result confirm = new("input confirm command to execute this command", true);
-        public static Word Word(string key, string @default) => new Word(@default, key, Program.langue);
+        public static Word Word(string key, string @default) => new Word(@default, key, Center.langue);
     }
 }

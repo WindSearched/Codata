@@ -1,4 +1,6 @@
-﻿namespace Codata.scripts;
+﻿using CdPlugin;
+
+namespace Codata.scripts;
 
 public static class Commands
 {
@@ -31,41 +33,7 @@ public static class Commands
         branch = Program.command;
     }
 
-    public static List<string> ParseArgs(string input)
-    {
-        var result = new List<string>();
-        var current = "";
-        bool inQuotes = false;
 
-        for (int i = 0; i < input.Length; i++)
-        {
-            char c = input[i];
-
-            if (c == '"')
-            {
-                inQuotes = !inQuotes;
-                continue;
-            }
-
-            if (c == ' ' && !inQuotes)
-            {
-                if (current.Length > 0)
-                {
-                    result.Add(current);
-                    current = "";
-                }
-            }
-            else
-            {
-                current += c;
-            }
-        }
-
-        if (current.Length > 0)
-            result.Add(current);
-
-        return result;
-    }
 
     public static string GetParamIndex(int index) => "param" + index;
 }
