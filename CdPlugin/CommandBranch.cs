@@ -1,8 +1,4 @@
-﻿using MoonSharp.Interpreter;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Codata.scripts;
+﻿using Codata.scripts;
 using Codata.scripts.classes;
 
 namespace CdPlugin
@@ -11,9 +7,9 @@ namespace CdPlugin
     {
         public string name;
 
-        private CdFunc<CommandArg, Result> execute;
+        public ICdFunc<CommandArg, Result> execute;
 
-        private CdFunc<CommandBranch, List<string>> suggestion;
+        public ICdFunc<CommandBranch, List<string>> suggestion;
 
         public List<CommandBranch> branches = new();
         public List<Argument> arguments = new();
@@ -34,8 +30,8 @@ namespace CdPlugin
 
         public CommandBranch(string name)
         {
-            execute = new(Center.luascript);
-            suggestion = new(Center.luascript);
+            execute = new CdFunc<CommandArg, Result>();
+            suggestion = new  CdFunc<CommandBranch, List<string>>();
             this.name = name;
         }
 
@@ -78,18 +74,18 @@ namespace CdPlugin
         // =========================
         public CommandBranch Execute(Func<CommandArg, Result> func)
         {
-            execute.Set(func);
+            execute = new CdFunc<CommandArg, Result>(func);
             return this;
         }
 
-        // =========================
-        // Lua 执行
-        // =========================
-        public CommandBranch Execute(Closure func)
-        {
-            execute.Set(func);
-            return this;
-        }
+        // // =========================
+        // // Lua 执行
+        // // =========================
+        // public CommandBranch Execute(Closure func)
+        // {
+        //
+        //     return this;
+        // }
 
         // =========================
         // 统一执行入口（关键）
@@ -98,7 +94,7 @@ namespace CdPlugin
 
         public CommandBranch SetParamExecute<Tval, Tres>(Func<string,Tval> newer, Func<Tval[], Tres> replacer, Func<Tres, Result> result)
         {
-            execute.Set((arg) =>
+            execute = new CdFunc<CommandArg, Result>((arg) =>
             {
                 Tval[] vals = new Tval [arg.args.Count];
                 for (int i = 0; i < vals.Length; i++)
@@ -181,14 +177,14 @@ namespace CdPlugin
 
         public CommandBranch SetSuggestion(Func<CommandBranch, List<string>> func)
         {
-            suggestion.func = func;
+            suggestion = new CdFunc<CommandBranch, List<string>>(func);
             return this;
         }
-        public CommandBranch SetSuggestion(Closure func)
-        {
-            suggestion.closure = func;
-            return this;
-        }
+        // public CommandBranch SetSuggestion(Closure func)
+        // {
+        //     suggestion = new CdFunc<CommandBranch, List<string>>(func);
+        //     return this;
+        // }
         public (List<string> list, string tag) GetSuggestions(List<string> args, out CommandBranch branch)
         {
             if (args.Count == 0)
@@ -300,24 +296,24 @@ namespace CdPlugin
         public class Argument
         {
             public string argument;
-            public CdFunc<List<string>> suggestion;
+            public ICdFunc<List<string>> suggestion;
 
             public Argument(string argument)
             {
-                suggestion = new(Center.luascript);
+                suggestion = new CdFunc<List<string>>();
                 this.argument = argument;
             }
 
             public Argument SetSuggestion(Func<List<string>> func)
             {
-                suggestion.func = func;
+                suggestion = new CdFunc<List<string>>(func);
                 return this;
             }
-            public Argument SetSuggestion(Closure func)
-            {
-                suggestion.closure = func;
-                return this;
-            }
+            // public Argument SetSuggestion(Closure func)
+            // {
+            //     suggestion.closure = func;
+            //     return this;
+            // }
 
         }
 

@@ -251,6 +251,6 @@ public static class Tools
         if(info.debug)
             Program.Log("[Debug]" + obj);
     }
-    public static void SetAfterConfirm(Closure closure) => Program.afterConfirm.Set(closure);
-    public static void SetAfterConfirm(Action act) => Program.afterConfirm.Set(act);
+    public static void SetAfterConfirm(Closure closure) => Program.afterConfirm = new LuaAction(closure);
+    public static void SetAfterConfirm(Action act) => Program.afterConfirm = new CdAction(act);
 }

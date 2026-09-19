@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using CdPlugin;
+using Codata.scripts.classes;
 using Codata.scripts.commandBranches;
 using Microsoft.VisualBasic.Logging;
 
@@ -16,7 +17,6 @@ public static class Lua
 
     public static void Load(string path)
     {
-
         script.DoFile(path);
 
         string name = Path.GetFileNameWithoutExtension(path);
@@ -57,8 +57,10 @@ public static class Lua
 
 
         UserData.RegisterType<CommandBranch>();
+        UserData.RegisterType<CdCmdBranch>();
         UserData.RegisterType<CommandBranch.CommandArg>();
         UserData.RegisterType<CommandBranch.Argument>();
+        UserData.RegisterType<CdCmdBranch.LuaArgument>();
         UserData.RegisterType<Result>();
 
     }
@@ -157,6 +159,6 @@ public static class LuaAutoWrapper
 
 public class New
 {
-    public static CommandBranch CommandBranch(string name) => new CommandBranch(name);
-    public static CommandBranch.Argument Argument(string name) => new(name);
+    public static CdCmdBranch CommandBranch(string name) => new CdCmdBranch(name);
+    public static CdCmdBranch.LuaArgument Argument(string name) => new CdCmdBranch.LuaArgument(name);
 }

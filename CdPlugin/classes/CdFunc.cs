@@ -1,113 +1,44 @@
-﻿using MoonSharp.Interpreter;
+﻿namespace Codata.scripts.classes;
 
-namespace Codata.scripts.classes;
-
-/// <summary>
-/// class integrated Function and MoonSharp Closure
-/// </summary>
-public class CdFunc<T,Tout>
+public interface ICdFunc<T>
 {
-    public Script script;
-    public Closure closure;
-    public Func<T,Tout> func;
-
-    public CdFunc(Script script, Closure closure = null, Func<T, Tout> func = null)
-    {
-        this.script = script;
-        this.closure = closure;
-        this.func = func;
-    }
-
-    public void Set(Func<T,Tout> func) =>  this.func = func;
-    public void Set(Closure closure) => this.closure = closure;
-
-    public Tout Invoke(T val)
-    {
-        if (closure != null)
-        {
-            var result = script.Call(
-                closure,
-                DynValue.FromObject(script, val)
-            );
-
-            return result.ToObject<Tout>();
-        }
-
-        // C# fallback
-        return func == null ? default : func(val);
-    }
-    public void Clear()
-    {
-        func = null;
-        closure = null;
-    }
+    public T Invoke();
 }
-public class CdFunc<Tout>
+public class CdFunc<T> : ICdFunc<T>
 {
-    public Script script;
-    public Closure closure;
-    public Func<Tout> func;
-
-    public CdFunc(Script script, Closure closure = null)
-    {
-        this.script = script;
-        this.closure = closure;
-    }
-
-    public void Set(Func<Tout> func) =>  this.func = func;
-    public void Set(Closure closure) => this.closure = closure;
-
-    public Tout Invoke()
-    {
-        if (closure != null)
-        {
-            var result = script.Call(
-                closure
-            );
-
-            return result.ToObject<Tout>();
-        }
-
-        // C# fallback
-        return func == null ? default : func();
-    }
-    public void Clear()
-    {
-        func = null;
-        closure = null;
-    }
+    public Func<T>? func;
+    public T Invoke() => func.Invoke();
+    public CdFunc(){}
+    public CdFunc(Func<T> func) => this.func = func;
+    public void Set(Func<T> func) => this.func = func;
 }
-public class CdAction
+
+public interface ICdFunc<I,O>
 {
-    public Script script;
-    public Closure closure;
+    public O Invoke(I input);
+}
+public class CdFunc<I, O> : ICdFunc<I, O>
+{
+    public Func<I, O> func;
+    public O Invoke(I input) => func.Invoke(input);
+
+    public CdFunc(){}
+    public CdFunc(Func<I, O> func) => this.func = func;
+    public void Set(Func<I,O> func) => this.func = func ?? throw new ArgumentNullException(nameof(func));
+}
+
+public interface ICdAction
+{
+    public void Invoke();
+    public void Clear();
+}
+
+public class CdAction : ICdAction
+{
     public Action action;
+    public void Invoke() =>  action.Invoke();
 
-    public CdAction(Script script, Closure closure = null)
-    {
-        this.script = script;
-        this.closure = closure;
-    }
-
-    public void Set(Action func) =>  this.action = func;
-    public void Set(Closure closure) => this.closure = closure;
-
-    public void Invoke()
-    {
-        if (closure != null)
-        {
-            var result = script.Call(
-                closure
-            );
-        }
-
-        // C# fallback
-        action?.Invoke();
-    }
-
-    public void Clear()
-    {
-        action = null;
-        closure = null;
-    }
+    public CdAction(){}
+    public CdAction(Action action) => this.action = action;
+    public void Clear() => action = null;
 }

@@ -10,7 +10,7 @@ class Program
 	public static CommandBranch command;
 	public static SpecialPointTube<string> commandTube = new(32);
 	public static MainForm form;
-	public static CdAction afterConfirm;
+	public static ICdAction afterConfirm;
 	public static event Action OnProgramClose;
 	public static PointCapturer capturer;
 	public static Stack<string> argstack = new();
@@ -27,7 +27,6 @@ class Program
 		RegisterCommands();
 		Commands.Init();
 		Lua.Init();
-		afterConfirm = new(Lua.script);
 		lineCommand = new LineCommand();
 		PluginRegister.Registering(Data.PathCombine(Data.filePath, "mods"));
 		Center.logAction = Log;
