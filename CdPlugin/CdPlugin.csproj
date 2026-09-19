@@ -7,8 +7,4 @@
         <RootNamespace>Plugini</RootNamespace>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="MoonSharp" Version="3.0.0-beta.1" />
-    </ItemGroup>
-
 </Project>
