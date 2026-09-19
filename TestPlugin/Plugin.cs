@@ -8,12 +8,12 @@ public class Plugin : CdInterface
 
     public void OnStart()
     {
-        Center.Print("TestPlugin Loaded");
+        Center.Log("TestPlugin Loaded");
     }
 
     public void OnClose()
     {
-        Center.Print("TestPlugin Closed");
+        Center.Log("TestPlugin Closed");
 
     }
 }

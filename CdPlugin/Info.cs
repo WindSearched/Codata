@@ -1,8 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Codata.scripts;
-
-
+﻿namespace Codata.scripts;
 public class Info
 {
     public static readonly string version = "test4";
